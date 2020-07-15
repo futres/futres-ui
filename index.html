@@ -13,26 +13,25 @@
     <!-- JS -->
     <script src="app.js"></script>
      <!-- Make sure you put this AFTER Leaflet's CSS -->
- <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
- integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
- crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
-    <title>Futres</title>
+    <title>FuTRES Data Portal</title>
 </head>
 <body>
     <header class="header">
-        <h1 class="logo">Futres</h1>
+        <h1 class="logo">FuTRES Data Portal</h1>
         <nav>
             <ul class="nav-links">
-                <li><a href="#">Link 1</a></li>
-                <li><a href="#">Link 2</a></li>
-                <li><a href="#">Link 3</a></li>
+                <li><a id="query-nav" class="tablink">Query</a></li>
+                <li><a id="browse-nav" class="nav-btn">Browse</a></li>
             </ul>
         </nav>
-        <button id="nav-btn" href="#">Contact</button>
     </header>
 
-    <div class="container-all">
+    <div id="query-tab" class="tabcontent">
         <div class="selects-container">
             <form> 
                 <label class="select-labels" for="scientific-name-input">Scientific Name:</label><br>
@@ -40,19 +39,16 @@
             </form>
 
             <label class="select-labels" for="measure-type-select">Measurement Type:</label><br>
-
             <select name="measurement" id="measurement-type-select">
                 <option value="">- Select a Measurement Type -</option>
             </select> <br>
 
             <label class="select-labels" for="year-select">Year Collected:</label><br>
-
             <select name="year" id="year-select">
                 <option value="">- Select Year Collected -</option>
             </select> <br>
 
             <label class="select-labels" for="country-select">Country:</label><br>
-
             <select name="country" id="country-select">
                 <option value="">- Select a Country -</option>
             </select><br>
@@ -67,7 +63,26 @@
             </div> <!--map div-->
         </div> <!--map container-->
 
-    </div> <!-- container div -->
+    </div> <!-- query tab div -->
+
+    <div id="browse-tab" class="tabcontent">
+        <div id="chart-wrapper">
+            <h2>Charts</h2>
+            <div id="chart-selects-container">
+                <select name="chart-select" id="chart-select">
+                    <option value="">- Select a Chart -</option>
+                    <option value="country">Countries</option>
+                    <option value="measurement-type">Measurement Type</option>
+                    <option value="year-collected">Year Collected</option>
+                    <option value="species">Species Collected</option>
+                </select> <br>
+            </div>
+    
+            <div id="chart-container">
+                    <canvas id="dataChart" width="500" height="600"></canvas>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

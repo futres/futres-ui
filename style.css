@@ -8,13 +8,23 @@
    padding: 0;
 }
 
+h1, h2, h3, h4, h5 {
+    font-family: "Montserrat", sans-serif;
+}
+
+p, label, select, table, input {
+    font-family: 'Istok Web', sans-serif;
+}
+
 /* HEADER NAV */
 header {
    display: flex;
    justify-content: flex-end;
    align-items: center;
    padding: 10px 10%;
-   background-color: #d09f53;
+   /* background-color: #f37a0d; */
+   background: rgb(191,153,215);
+   background: linear-gradient(135deg, rgba(191,153,215,1) 5%, rgba(241,124,124,1) 49%, rgba(252,176,69,1) 100%);
 }
 
 .logo {
@@ -42,16 +52,17 @@ header li, header a {
    padding: 0 20px;
 }
 
-.nav-links li a {
+.nav-links li button {
    transition: all 0.3s ease 0s;
 }
 
 .nav-links li a:hover {
-   color: #866899;
    text-decoration: none;
+   cursor: pointer;
 }
 
-#nav-btn {
+/* Current Page Selected in Nav button */
+.nav-btn {
     padding: 9px 25px;
     font-family: "Montserrat", sans-serif;
     background-color: #866899;
@@ -65,18 +76,17 @@ header li, header a {
     text-decoration: none;
 }
 
-/* CONTENT */
-.container-all {
+/* QUERY TAB */
+#query-tab {
     width: 100%;
     padding: 0 5px;
-    display: flex;
+    display: none;
     justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
 .select-labels {
-    font-family: 'Istok Web', sans-serif;
     margin: 5px;
 }
 
@@ -86,14 +96,7 @@ header li, header a {
     width: 35%;
 }
 
-#scientific-name-input {
-    margin: 5px 5px 10px 5px;
-    padding: 5px 10px;
-    width: 95%;
-}
-
-select {
-    font-family: 'Istok Web', sans-serif;
+#scientific-name-input, select {
     margin: 5px 5px 10px 5px;
     padding: 5px 10px;
     width: 95%;
@@ -109,7 +112,7 @@ select {
     flex: 1;
 }
 
-
+/* Search button */
 .btn-all {
     margin: 10px;
     padding: 5px 20px;
@@ -117,7 +120,37 @@ select {
     border-radius: 50px;
     font-family: "Montserrat", sans-serif;
     color: oldlace;
-    background-color: #d09f53;
+    background-color: #fcb045;
     font-size: large;
     width: 30%;
+}
+
+/* BROWSE TAB */
+#browse-tab {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* border: 1px solid red; */
+    width: 100%;
+    padding: 0 5px;
+}
+
+#chart-wrapper {
+    /* border: 1px solid green; */
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 60%;
+}
+
+#chart-selects-container {
+    /* border: 1px solid blue; */
+    width: 100%;
+}
+
+#chart-container {
+    width: 100%;
+    /* border: 1px solid grey; */
 }
