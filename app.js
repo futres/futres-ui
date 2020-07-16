@@ -220,15 +220,39 @@ window.onload = function() {
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
+
+                let checkPI = () => {
+                    if (project.principalInvestigator == null || '') {
+                        return 'None Listed'
+                    } else {
+                        return project.principalInvestigator
+                    }
+                }
+
+                let checkAffiliation = () => {
+                    if(project.principalInvestigatorAffiliation == null || '') {
+                        return 'None Listed'
+                    } else {
+                        return project.principalInvestigatorAffiliation
+                    }
+                }
+
+                let checkContact = () => {
+                    if(project.projectContact == null || '') {
+                        return 'None Listed'
+                    } else {
+                        return project.projectContact
+                    }
+                }
                 
                 const projectsTable = document.getElementById('project-table')
                 let tr = document.createElement('tr')
 
                 tr.innerHTML = `
                 <td>${title}</td>
-                <td>${project.principalInvestigator}</td>
-                <td>${project.principalInvestigatorAffiliation}</td>
-                <td>${project.projectContact}</td>
+                <td>${checkPI()}</td>
+                <td>${checkAffiliation()}</td>
+                <td>${checkContact()}</td>
                 `
 
                 projectsTable.appendChild(tr)
