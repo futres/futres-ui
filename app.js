@@ -1,5 +1,4 @@
 window.onload = function() {
-
     const apiBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/'
     const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
     const scientificNameInput = document.getElementById('scientific-name-input')
@@ -26,6 +25,7 @@ window.onload = function() {
     })
 
     // BROWSE TAB
+    fetchProjects()
 
     // Chart Selects
     chartSelect.addEventListener('change', function() {
@@ -158,7 +158,6 @@ window.onload = function() {
             }
         })
     }
-    fetchProjects()
 
 // Accordion
 let coll = document.getElementsByClassName("collapsible-button");

@@ -16,22 +16,43 @@ p, label, select, table, input, th, td {
     font-family: 'Istok Web', sans-serif;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+th {
+    border-bottom: 2px solid #bdc3c7;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 10px 5px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+
+.no-hover:hover {
+    background-color: white;
+}
+
+tr:hover {
+    background-color: #f2f3f3;
+}
+
+td {
+    border-bottom: 1px solid #d1d6da;
+    margin: 10px 5px 5px 5px;
+    padding: 10px;
+    color: #34495e;
+}
+
 /* HEADER NAV */
 header {
    display: flex;
    justify-content: flex-end;
    align-items: center;
    padding: 10px 10%;
-   /* background-color: #f37a0d; */
    background: rgb(191,153,215);
    background: linear-gradient(135deg, rgba(191,153,215,1) 5%, rgba(241,124,124,1) 49%, rgba(252,176,69,1) 100%);
-}
-
-.logo {
-   cursor: pointer;
-   margin-right: auto;
-   color: oldlace;
-   font-family: "Montserrat", sans-serif;
 }
 
 header li, header a {
@@ -41,6 +62,13 @@ header li, header a {
    font-size: 16px;
    color: oldlace;
    text-decoration: none;
+}
+
+.logo {
+   cursor: pointer;
+   margin-right: auto;
+   color: oldlace;
+   font-family: "Montserrat", sans-serif;
 }
 
 .nav-links {
@@ -65,7 +93,7 @@ header li, header a {
 .nav-btn {
     padding: 9px 25px;
     font-family: "Montserrat", sans-serif;
-    background-color: #866899;
+    background-color: #8e44ad;
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -135,17 +163,17 @@ header li, header a {
     padding: 0 5px;
 }
 
-.page-h1 {
-    margin: auto;
+.page-h {
+    margin: 5px auto;
     padding: 5px;
 }
 
 /* ACCORDION - COLLAPSIBLE DASH */
 .collapsible-button {
-    background-color: #eee;
-    color: #444;
+    background-color: #ecf0f1;
+    color: #2c3e50;
     cursor: pointer;
-    padding: 18px;
+    padding: 15px;
     width: 100%;
     border: none;
     text-align: left;
@@ -154,7 +182,11 @@ header li, header a {
 }
 
 .active, .collapsible-button:hover {
-    background-color: #ccc;
+    background-color: #bdc3c7;
+}
+
+.collapsible-button:hover {
+    transition: 1s all ease;
 }
 
 .collapse-content {
@@ -166,16 +198,19 @@ header li, header a {
 }
 
 .collapsible-button:after {
-    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    content: '\25BC'; /* Unicode character for down arrow (V) */
     font-size: 13px;
-    color: white;
+    color: #2c3e50;
+    font-size: large;
     float: right;
     margin-left: 5px;
   }
   
   .active:after {
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
-  }
+    content: "\25B2"; /* Unicode character for up arrow (A) */
+    color: #2c3e50;
+    font-size: large;
+}
 
 /* CHARTS */
 #chart-wrapper {
@@ -197,26 +232,20 @@ header li, header a {
     width: 100%;
 }
 
+/* PROJECTS */
+#projects-wrapper {
+    width: 100%;
+}
+
+#project-table {
+    width: 100%;
+    text-align: left;
+}
+
 /* TABLES */
+
 #tables-wrapper {
-    /* border: 2px solid blue; */
-    margin: auto;
-    width: 100%;
-}
-
-table {
-    width: 100%;
-}
-
-.no-hover:hover {
-    background-color: white;
-}
-
-tr:hover {
-    background-color: rgb(236, 232, 232);
-}
-
-td {
-    /* margin: 3px 0 0 3px; */
-    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
