@@ -7,7 +7,10 @@ window.onload = function() {
     const countrySelect = document.getElementById('country-select')
     const chartSelect = document.getElementById('chart-select')
 
-    // NAV Buttons
+    /******************** 
+        NAVIGATION 
+    *********************/
+
     const browseBtn = document.getElementById('browse-nav')
     const queryNav = document.getElementById('query-nav')
 
@@ -24,8 +27,15 @@ window.onload = function() {
         buildMap()
     })
 
-    // BROWSE TAB
+    /******************** 
+        BROWSE TAB 
+    *********************/
+
     fetchProjects()
+    countryTableData()
+    speciesTableData()
+    yearCollectedTableData()
+    measurementTypeTableData()
 
     // Chart Selects
     chartSelect.addEventListener('change', function() {
@@ -45,29 +55,42 @@ window.onload = function() {
         }
     })
 
-    function removePreviousChart() {
-        if(window.barChart != null) {
-            window.barChart.destroy()
-        }
-    }
-
     async function getSpecies() {
         const res = await fetch(`${apiBaseURL}scientificName.json`)
         const data = await res.json()
 
         let scientificName = []
         let values = []
+        let obj = []
 
         data.forEach(species => {
             scientificName.push(species.scientificName)
             values.push(species.value)
+            obj.push(species)
         })
-        return { scientificName, values }
+        return { scientificName, values, obj }
     }
 
     async function showSpeciesChart() {
         const data = await getSpecies()
         makeBarChart(data.scientificName, 'Species By Scientific Name', data.values)
+    }
+
+    async function speciesTableData() {
+        const data = await getSpecies()
+        let species = data.obj
+
+        species.forEach(x => {
+            const speciesTable = document.getElementById('species-table')
+            let tr = document.createElement('tr')
+
+            tr.innerHTML = `
+            <td>${x.scientificName}</td>
+            <td>${x.value}</td>
+            `
+
+            speciesTable.appendChild(tr)
+        })
     }
 
     async function getMeasurementType() {
@@ -76,19 +99,37 @@ window.onload = function() {
 
         let type = []
         let values = []
+        let obj = []
 
         data.forEach(item => {
             let option = new Option(`${item.measurementType}`, `${item.measurementType}`)
             typeSelect.appendChild(option)
             type.push(item.measurementType)
             values.push(item.value)
+            obj.push(item)
         })
-        return { type, values }
+        return { type, values, obj }
     }
 
     async function showMeasurementTypeChart() {
         const data = await getMeasurementType()
         makeBarChart(data.type, 'Measurement Types', data.values)
+    }
+
+    async function measurementTypeTableData() {
+        const data = await getMeasurementType()
+        let types = data.obj
+
+        types.forEach(x => {
+            const typesTable = document.getElementById('measure-table')
+            let tr = document.createElement('tr')
+
+            tr.innerHTML = `
+            <td>${x.measurementType}</td>
+            <td>${x.value}</td>
+            `
+            typesTable.appendChild(tr)
+        })
     }
 
     async function getYearCollected() {
@@ -97,14 +138,16 @@ window.onload = function() {
 
         let yearCollected = []
         let values = []
+        let obj = []
 
         data.forEach(year => {
             let option = new Option(`${year.yearCollected}`, `${year.yearCollected}`)
             yearSelect.appendChild(option)
             yearCollected.push(year.yearCollected)
             values.push(year.value)
+            obj.push(year)
         })
-        return { yearCollected, values }
+        return { yearCollected, values, obj }
     }
 
     async function showYearCollectedChart() {
@@ -112,19 +155,54 @@ window.onload = function() {
         makeBarChart(data.yearCollected, 'Year Collected', data.values)
     }
 
+    async function yearCollectedTableData() {
+        const data = await getYearCollected()
+        let years = data.obj
+
+        years.forEach(x => {
+            const yearTable = document.getElementById('year-table')
+            let tr = document.createElement('tr')
+
+            tr.innerHTML = `
+            <td>${x.yearCollected}</td>
+            <td>${x.value}</td>
+            `
+            yearTable.appendChild(tr)
+        })
+    }
+
     async function getCountry() {
         const res = await fetch(`${apiBaseURL}country.json`)
         const data = await res.json()
         let countries = []
         let values = []
+        let obj = []
 
         data.forEach(country => {
             let option = new Option(`${country.country}`, `${country.country}`)
             countrySelect.appendChild(option)
             countries.push(country.country)
             values.push(country.value)
+            obj.push(country)
         })
-        return {countries, values}
+        return {countries, values, obj}
+    }
+
+    async function countryTableData() {
+        const data = await getCountry()
+        let countries = data.obj
+
+        countries.forEach(x => {
+            const countryTable = document.getElementById('country-table')
+            let tr = document.createElement('tr')
+
+            tr.innerHTML = `
+            <td>${x.country}</td>
+            <td>${x.value}</td>
+            `
+
+            countryTable.appendChild(tr)
+        })
     }
 
     async function showCountriesChart() {
@@ -143,8 +221,7 @@ window.onload = function() {
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
                 
-                
-                let projectsTable = document.getElementById('project-table')
+                const projectsTable = document.getElementById('project-table')
                 let tr = document.createElement('tr')
 
                 tr.innerHTML = `
@@ -159,23 +236,9 @@ window.onload = function() {
         })
     }
 
-// Accordion
-let coll = document.getElementsByClassName("collapsible-button");
-
-for (let i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    let content = this.nextElementSibling;
-
-    if (content.style.maxHeight){
-        content.style.maxHeight = null;
-      } else {
-        content.style.maxHeight = content.scrollHeight + "px";
-      } 
-  });
-}
-
-    //QUERY PAGE
+    /******************** 
+        QUERY PAGE 
+    *********************/
     
     // Search Button onclick
     document.getElementById('search-btn').addEventListener('click', function() {
@@ -195,6 +258,11 @@ for (let i = 0; i < coll.length; i++) {
             .openPopup();
     }
 
+    /******************** 
+        OTHER FUNCTIONS 
+    *********************/
+
+    // Tab Toggle
     function openPage(pageName) {
         let tabcontent = document.getElementsByClassName("tabcontent");
         for (let i = 0; i < tabcontent.length; i++) {
@@ -205,40 +273,62 @@ for (let i = 0; i < coll.length; i++) {
         document.getElementById(pageName).style.display = "flex";
       }
 
+    // Accordion - Collapsible
+    let coll = document.getElementsByClassName("collapsible-button");
+
+    for (let i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        let content = this.nextElementSibling;
+
+        if (content.style.maxHeight){
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        } 
+    });
+    }
+
     //Generic Horizontal Bar Chart
-async function makeBarChart(xAxisLabels, title, values) {
-    const purple = 'rgba(153, 102, 255, 0.2)'
-    const darkerPurple = 'rgba(153, 102, 255, 1)'
-    let chartContainer = document.getElementById('chart-container')
+    async function makeBarChart(xAxisLabels, title, values) {
+        const purple = 'rgba(153, 102, 255, 0.2)'
+        const darkerPurple = 'rgba(153, 102, 255, 1)'
+        let chartContainer = document.getElementById('chart-container')
 
-    let canvas = document.createElement('canvas')
-    canvas.id = 'dataChart'
-    canvas.width = '500px'
-    canvas.height = '600px'
-    chartContainer.appendChild(canvas)
+        let canvas = document.createElement('canvas')
+        canvas.id = 'dataChart'
+        canvas.width = '500px'
+        canvas.height = '600px'
+        chartContainer.appendChild(canvas)
 
-    let ctx = document.getElementById('dataChart').getContext('2d');
+        let ctx = document.getElementById('dataChart').getContext('2d');
 
-    window.barChart = new Chart(ctx, {
-        type: 'horizontalBar',
-        options: {
-          maintainAspectRatio: false,
-          legend: {
-            display: true
-          }
-        },
-        data: {
-          labels: xAxisLabels,
-          datasets: [
-            {
-              label: title,
-              data: values,
-              backgroundColor: purple,
-              borderColor: darkerPurple,
-              borderWidth: 1
+        window.barChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            options: {
+            maintainAspectRatio: false,
+            legend: {
+                display: true
             }
-          ]
+            },
+            data: {
+            labels: xAxisLabels,
+            datasets: [
+                {
+                label: title,
+                data: values,
+                backgroundColor: purple,
+                borderColor: darkerPurple,
+                borderWidth: 1
+                }
+            ]
+            }
+        });
+    }
+
+    function removePreviousChart() {
+        if(window.barChart != null) {
+            window.barChart.destroy()
         }
-      });
-}
+    }
 }

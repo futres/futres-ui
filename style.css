@@ -248,4 +248,37 @@ header li, header a {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    width: 100%;
 }
+
+#tables-wrapper > div {
+    border: 1px solid grey;
+    width: 25%;
+    height: 482px;
+    overflow: auto;
+    white-space:nowrap;
+    border-spacing:0;
+    display:inline-block;
+}
+
+#country-table, #measure-table, #species-table, #year-table {
+    width: 100%;
+    text-align: left;
+}
+
+/* #country-table {
+    width: 100%;
+}
+
+#measure-table {
+    width: 100%;
+}
+
+#species-table {
+    width: 100%;
+}
+*/
+
+/* #year-table {
+    height: 550px;
+}  */
