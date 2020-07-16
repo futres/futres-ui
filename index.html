@@ -66,8 +66,10 @@
     </div> <!-- query tab div -->
 
     <div id="browse-tab" class="tabcontent">
-        <div id="chart-wrapper">
-            <h2>Charts</h2>
+        <h1 class="page-h1">Browse Data Visualization</h1>
+
+        <h2 class="collapsible-button">Charts</h2>
+        <div id="chart-wrapper" class="collapse-content">
             <div id="chart-selects-container">
                 <select name="chart-select" id="chart-select">
                     <option value="">- Select a Chart -</option>
@@ -76,13 +78,28 @@
                     <option value="year-collected">Year Collected</option>
                     <option value="species">Species Collected</option>
                 </select> <br>
-            </div>
+            </div> <!--chart select container-->
     
             <div id="chart-container">
-                    <canvas id="dataChart" width="500" height="600"></canvas>
+                    <canvas id="dataChart" width="800" height="650"></canvas>
             </div>
-        </div>
-    </div>
+        </div> <!-- chart wrapper -->
+
+        <h2 class="collapsible-button">Tables</h2>
+        <div id="tables-wrapper" class="collapse-content">
+            <div id="proj-table-container">
+                <table id="project-table">
+                        <tr class="no-hover">
+                            <th>Project Title</th>
+                            <th>Principal Investigator</th>
+                            <th>PI Affiliation</th>
+                            <th>Project Contact</th>
+                        </tr>
+                </table>
+            </div>
+        </div> <!--tables wrapper-->
+    
+    </div> <!-- browse tab-->
 
 </body>
 </html>

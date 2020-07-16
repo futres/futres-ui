@@ -12,7 +12,7 @@ h1, h2, h3, h4, h5 {
     font-family: "Montserrat", sans-serif;
 }
 
-p, label, select, table, input {
+p, label, select, table, input, th, td {
     font-family: 'Istok Web', sans-serif;
 }
 
@@ -131,26 +131,92 @@ header li, header a {
     justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
-    /* border: 1px solid red; */
     width: 100%;
     padding: 0 5px;
 }
 
+.page-h1 {
+    margin: auto;
+    padding: 5px;
+}
+
+/* ACCORDION - COLLAPSIBLE DASH */
+.collapsible-button {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+}
+
+.active, .collapsible-button:hover {
+    background-color: #ccc;
+}
+
+.collapse-content {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: auto;
+    transition: max-height 0.2s ease-out;
+}
+
+.collapsible-button:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: white;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+  }
+
+/* CHARTS */
 #chart-wrapper {
-    /* border: 1px solid green; */
+    margin: auto;
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
-    flex-wrap: wrap;
-    width: 60%;
+    flex-wrap: column wrap;
+    width: 100%;
 }
 
 #chart-selects-container {
-    /* border: 1px solid blue; */
-    width: 100%;
+    width: 50%;
+    margin: auto;
 }
 
 #chart-container {
+    margin: 5px;
     width: 100%;
-    /* border: 1px solid grey; */
+}
+
+/* TABLES */
+#tables-wrapper {
+    /* border: 2px solid blue; */
+    margin: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+}
+
+.no-hover:hover {
+    background-color: white;
+}
+
+tr:hover {
+    background-color: rgb(236, 232, 232);
+}
+
+td {
+    /* margin: 3px 0 0 3px; */
+    padding: 5px;
 }

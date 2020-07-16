@@ -1,14 +1,14 @@
 window.onload = function() {
 
     const apiBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/'
-    // const projectBaseURL
+    const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
     const scientificNameInput = document.getElementById('scientific-name-input')
     const typeSelect = document.getElementById('measurement-type-select')
     const yearSelect = document.getElementById('year-select')
     const countrySelect = document.getElementById('country-select')
     const chartSelect = document.getElementById('chart-select')
 
-    // NAV TABS
+    // NAV Buttons
     const browseBtn = document.getElementById('browse-nav')
     const queryNav = document.getElementById('query-nav')
 
@@ -112,7 +112,6 @@ window.onload = function() {
         makeBarChart(data.yearCollected, 'Year Collected', data.values)
     }
 
-    // Get country data
     async function getCountry() {
         const res = await fetch(`${apiBaseURL}country.json`)
         const data = await res.json()
@@ -128,16 +127,89 @@ window.onload = function() {
         return {countries, values}
     }
 
-    // Build country chart
     async function showCountriesChart() {
         const data = await getCountry()
         makeBarChart(data.countries, 'Countries', data.values)
     }
 
-    let purple = 'rgba(153, 102, 255, 0.2)'
-    let darkerPurple = 'rgba(153, 102, 255, 1)'
+    async function fetchProjects() {
+        const res = await fetch(projBaseURL)
+        const data = await res.json()
 
+        data.forEach(project => {
+            if (project.projectConfiguration.id == 70 && project.discoverable == true) {
+                // console.log(project);
+                let arr = project.projectTitle.split('_').toString()
+                let noCommas = arr.replace(/,/g, ' ')
+                let title = noCommas.replace(/FuTRES/g, '')
+                
+                
+                let projectsTable = document.getElementById('project-table')
+                let tr = document.createElement('tr')
+
+                tr.innerHTML = `
+                <td>${title}</td>
+                <td>${project.principalInvestigator}</td>
+                <td>${project.principalInvestigatorAffiliation}</td>
+                <td>${project.projectContact}</td>
+                `
+
+                projectsTable.appendChild(tr)
+            }
+        })
+    }
+    fetchProjects()
+
+// Accordion
+let coll = document.getElementsByClassName("collapsible-button");
+
+for (let i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    let content = this.nextElementSibling;
+
+    if (content.style.maxHeight){
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      } 
+  });
+}
+
+    //QUERY PAGE
+    
+    // Search Button onclick
+    document.getElementById('search-btn').addEventListener('click', function() {
+        console.log(scientificNameInput.value.trim())
+    })
+
+    // Query Page Map
+    function buildMap() {
+        let map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    
+        L.marker([51.5, -0.09]).addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            .openPopup();
+    }
+
+    function openPage(pageName) {
+        let tabcontent = document.getElementsByClassName("tabcontent");
+        for (let i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+      
+        // Show the specific tab content
+        document.getElementById(pageName).style.display = "flex";
+      }
+
+    //Generic Horizontal Bar Chart
 async function makeBarChart(xAxisLabels, title, values) {
+    const purple = 'rgba(153, 102, 255, 0.2)'
+    const darkerPurple = 'rgba(153, 102, 255, 1)'
     let chartContainer = document.getElementById('chart-container')
 
     let canvas = document.createElement('canvas')
@@ -170,34 +242,4 @@ async function makeBarChart(xAxisLabels, title, values) {
         }
       });
 }
-
-    //QUERY PAGE
-    
-    // Search Button onclick
-    document.getElementById('search-btn').addEventListener('click', function() {
-        console.log(scientificNameInput.value.trim())
-    })
-
-    // Query Page Map
-    function buildMap() {
-        let map = L.map('map').setView([51.505, -0.09], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-    
-        L.marker([51.5, -0.09]).addTo(map)
-            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-            .openPopup();
-    }
-
-    function openPage(pageName) {
-        let tabcontent = document.getElementsByClassName("tabcontent");
-        for (let i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-      
-        // Show the specific tab content
-        document.getElementById(pageName).style.display = "flex";
-      }
 }
