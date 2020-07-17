@@ -28,6 +28,23 @@ window.onload = function() {
     })
 
     /******************** 
+            MODAL 
+    *********************/
+
+    let modal = document.getElementById("detail-modal");
+    let span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        }
+    }
+
+    /******************** 
         BROWSE TAB 
     *********************/
 
@@ -79,6 +96,7 @@ window.onload = function() {
     async function speciesTableData() {
         const data = await getSpecies()
         let species = data.obj
+        // console.log(species);
 
         species.forEach(x => {
             const speciesTable = document.getElementById('species-table')
@@ -210,13 +228,41 @@ window.onload = function() {
         makeBarChart(data.countries, 'Countries', data.values)
     }
 
+
+    async function speciesByProjId(id) {
+        const res = await fetch(`${apiBaseURL}scientificName_projectId_${id}.json`)
+        if(res.status == 200) {
+            const data = await res.json()
+
+            data.forEach(x => {
+                console.log(x);
+
+                let modalTable = document.getElementById('modal-table')
+                let tr = document.createElement('tr')
+
+                tr.innerHTML = `
+                <td>${x.scientificName}</td>
+                <td>${x.value}</td>
+                `
+
+                modalTable.appendChild(tr)
+            })
+        } else {
+            throw new Error(res.status)
+        }
+    }
+
+    // PROJECTS TABLE
     async function fetchProjects() {
         const res = await fetch(projBaseURL)
         const data = await res.json()
 
+        let targetId = []
+        // console.log(targetId, '<---- in the array')
+
         data.forEach(project => {
             if (project.projectConfiguration.id == 70 && project.discoverable == true) {
-                // console.log(project);
+                // console.log(project.projectId);
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
@@ -248,6 +294,14 @@ window.onload = function() {
                 const projectsTable = document.getElementById('project-table')
                 let tr = document.createElement('tr')
 
+                tr.addEventListener('click', function() {
+                    targetId.push(project.projectId)
+                    modal.style.display = "block"
+                    speciesByProjId(project.projectId)
+                    // console.log('id clicked on:', project.projectId)
+                })
+
+
                 tr.innerHTML = `
                 <td>${title}</td>
                 <td>${checkPI()}</td>
@@ -255,11 +309,11 @@ window.onload = function() {
                 <td>${checkContact()}</td>
                 <td>${project.entityStats.DiagnosticsCount}</td>
                 `
-
                 projectsTable.appendChild(tr)
             }
         })
     }
+
 
     /******************** 
         QUERY PAGE 
@@ -316,12 +370,12 @@ window.onload = function() {
 
     // Table heading sort 
     let th = document.getElementsByClassName('ascending')
-    for (let i =0; i < th.length; i++ ) {
+    for (let i = 0; i < th.length; i++ ) {
         th[i].addEventListener('click', function() {
             if (this.classList.contains('ascending')) {
-                this.classList.replace("ascending", "descending")
+                this.classList.replace('ascending', 'descending')
             } else {
-                this.classList.replace("descending", "ascending")
+                this.classList.replace('descending', 'ascending')
             }
         })
     }
