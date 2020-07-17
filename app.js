@@ -253,6 +253,7 @@ window.onload = function() {
                 <td>${checkPI()}</td>
                 <td>${checkAffiliation()}</td>
                 <td>${checkContact()}</td>
+                <td>${project.entityStats.DiagnosticsCount}</td>
                 `
 
                 projectsTable.appendChild(tr)
@@ -313,6 +314,19 @@ window.onload = function() {
     });
     }
 
+    // Table heading sort 
+    let th = document.getElementsByClassName('ascending')
+    for (let i =0; i < th.length; i++ ) {
+        th[i].addEventListener('click', function() {
+            if (this.classList.contains('ascending')) {
+                this.classList.replace("ascending", "descending")
+            } else {
+                this.classList.replace("descending", "ascending")
+            }
+        })
+    }
+
+
     //Generic Horizontal Bar Chart
     async function makeBarChart(xAxisLabels, title, values) {
         const purple = 'rgba(153, 102, 255, 0.2)'
@@ -355,4 +369,7 @@ window.onload = function() {
             window.barChart.destroy()
         }
     }
+
+
+
 }

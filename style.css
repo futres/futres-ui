@@ -51,8 +51,7 @@ header {
    justify-content: flex-end;
    align-items: center;
    padding: 10px 10%;
-   background: rgb(191,153,215);
-   background: linear-gradient(135deg, rgba(191,153,215,1) 5%, rgba(241,124,124,1) 49%, rgba(252,176,69,1) 100%);
+   background: #cd6133;
 }
 
 header li, header a {
@@ -60,14 +59,14 @@ header li, header a {
    font-family: "Montserrat", sans-serif;
    font-weight: 500;
    font-size: 16px;
-   color: oldlace;
+   color: #f7f1e3;
    text-decoration: none;
 }
 
 .logo {
    cursor: pointer;
    margin-right: auto;
-   color: oldlace;
+   color: #f7f1e3;
    font-family: "Montserrat", sans-serif;
 }
 
@@ -93,7 +92,7 @@ header li, header a {
 .nav-btn {
     padding: 9px 25px;
     font-family: "Montserrat", sans-serif;
-    background-color: #8e44ad;
+    background-color: #40407a;
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -266,19 +265,22 @@ header li, header a {
     text-align: left;
 }
 
-/* #country-table {
-    width: 100%;
+#country-table th, #measure-table th, #species-table th, #year-table th {
+    background-color: #f7d794;
+    cursor: pointer;
 }
 
-#measure-table {
-    width: 100%;
+/* Table heading arrows */
+.descending:before {
+    margin-right: 3px;
+    font-size: 9px;
+    content: '\25BC'; 
+    /* Unicode character for down arrow (V) */
 }
 
-#species-table {
-    width: 100%;
+.ascending:before {
+    margin-right: 3px;
+    font-size: 9px;
+    content: "\25B2"; 
+    /* Unicode character for up arrow (A) */
 }
-*/
-
-/* #year-table {
-    height: 550px;
-}  */
