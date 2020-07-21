@@ -7,6 +7,16 @@ window.onload = function() {
     const countrySelect = document.getElementById('country-select')
     const chartSelect = document.getElementById('chart-select')
 
+    const link = 'https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=scientificName=Puma+concolor'
+
+    function idk() {
+        fetch(link)
+        .then(res => res.json())
+        .then(data => console.log(data))
+    }
+
+    idk()
+
     /******************** 
         NAVIGATION 
     *********************/
@@ -257,11 +267,12 @@ window.onload = function() {
         const res = await fetch(projBaseURL)
         const data = await res.json()
 
+
         let targetId = []
         // console.log(targetId, '<---- in the array')
 
         data.forEach(project => {
-            if (project.projectConfiguration.id == 70 && project.discoverable == true) {
+            if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
                 // console.log(project.projectId);
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
@@ -282,14 +293,6 @@ window.onload = function() {
                         return project.principalInvestigatorAffiliation
                     }
                 }
-
-                let checkContact = () => {
-                    if(project.projectContact == null || '') {
-                        return 'None Listed'
-                    } else {
-                        return project.projectContact
-                    }
-                }
                 
                 const projectsTable = document.getElementById('project-table')
                 let tr = document.createElement('tr')
@@ -306,7 +309,6 @@ window.onload = function() {
                 <td>${title}</td>
                 <td>${checkPI()}</td>
                 <td>${checkAffiliation()}</td>
-                <td>${checkContact()}</td>
                 <td>${project.entityStats.DiagnosticsCount}</td>
                 `
                 projectsTable.appendChild(tr)
@@ -380,7 +382,6 @@ window.onload = function() {
         })
     }
 
-
     //Generic Horizontal Bar Chart
     async function makeBarChart(xAxisLabels, title, values) {
         const purple = 'rgba(153, 102, 255, 0.2)'
@@ -423,7 +424,4 @@ window.onload = function() {
             window.barChart.destroy()
         }
     }
-
-
-
 }
