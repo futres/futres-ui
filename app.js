@@ -57,25 +57,17 @@ window.onload = function() {
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": [`${lon}`, `${lat}`]
+                "coordinates": [lon, lat]
             }
         };
 
+        let zoom = 5
+        let marker = L.marker([0,0], 3).addTo(map)
+        marker.setLatLng([lat,lon])
+        .bindPopup(`Scientific Name: ${geojsonFeature.properties.name} <br>
+        Year Collected: ${geojsonFeature.properties.popupContent}`)
 
-        let options = {
-            radius: 8,
-            fillColor: "#ff7800",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-        };
-
-        L.geoJSON(geojsonFeature, {
-            pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, options).bindPopup(feature.properties.name + feature.properties.popupContent)
-            }
-        }).addTo(map)
+        map.setView([lat, lon], zoom)
     }
 
 
@@ -105,8 +97,8 @@ window.onload = function() {
 
 
     function fetchByScientificName(number, name) {
-        const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
-        // const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=20&_source=decimalLatitude,decimalLongitude,yearCollected,measurementType,measurementUnit,measurementValue,country,sex,scientificName&q=scientificName=${name}`
+        // const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
+        const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=2020`
 
         fetch(scientificNameURL)
         .then(res => res.json())
@@ -123,7 +115,6 @@ window.onload = function() {
                     let x = hit._source
                     if (name == x.scientificName) {
                         let table = document.getElementById('query-table')
-                        // console.log(x);
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                         <td>${x.scientificName}</td>
@@ -133,6 +124,8 @@ window.onload = function() {
                         <td>${x.measurementValue}</td>
                         <td>${x.measurementUnit}</td>
                         <td>${x.sex}</td>
+                        <td>${x.decimalLatitude}</td>
+                        <td>${x.decimalLongitude}</td>
                         `
                         table.appendChild(tr)
                     }
@@ -140,6 +133,15 @@ window.onload = function() {
             } else if (tableRadio.checked == false && mapRadio.checked == true) {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                    if (name == x.scientificName) {
+                        plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
+                    } else {
+                        console.log('no coordinates found for: ' + name)
+                    }
+                })
             } else {
                 alert('Select Map or Table');
             }
@@ -156,34 +158,13 @@ window.onload = function() {
             if (tableRadio.checked == true && mapRadio.checked == false) {
                 queryTableContainer.style.display = 'flex'
                 mapContainer.style.display = 'none'
-                let table = document.createElement('table')
-                table.id = 'query-table'
-        
-                let trHeader = document.createElement('tr')
-                trHeader.innerHTML = `
-                <th>Scientific Name</th>
-                <th>Country</th>
-                <th>Year Collected</th>
-                <th>Measurement Type</th>
-                <th>Measurement Value</th>
-                <th>Measurement Unit</th>
-                <th>Sex</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                `
-                queryTableContainer.appendChild(table)
-                table.appendChild(trHeader)
+                buildQueryTable('query-table')
 
                 dataArr.forEach(hit => {
                     let x = hit._source
+                    let table = document.getElementById('query-table')
                             
                     if(year == x.yearCollected) {
-                        // console.log(x);
-                        // console.log(x.yearCollected)
-                        // console.log(x.scientificName)
-                        // console.log(x.decimalLatitude)
-                        // console.log(x.decimalLongitude)
-
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                         <td>${x.scientificName}</td>
@@ -208,9 +189,9 @@ window.onload = function() {
 
                     if (year == x.yearCollected) {
                         console.log('LAT: ' + x.decimalLatitude + ' LON: ' + x.decimalLongitude);
-                        plotPoint(x.scientificName, year, x.decimalLatitude, x.decimalLongitude)
+                        plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
                     } else {
-                        console.log(x, 'coordinates for this year not found');
+                        console.log('coordinates for this year not found');
                     }
                 })
             } else {
@@ -704,6 +685,8 @@ window.onload = function() {
         <th>Measurement Value</th>
         <th>Measurement Unit</th>
         <th>Sex</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
         `
         queryTableContainer.appendChild(table)
         table.appendChild(trHeader)
