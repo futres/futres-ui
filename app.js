@@ -1,21 +1,265 @@
 window.onload = function() {
     const apiBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/'
     const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
-    const scientificNameInput = document.getElementById('scientific-name-input')
+    const scientificNameSelect = document.getElementById('scientific-name-select')
     const typeSelect = document.getElementById('measurement-type-select')
     const yearSelect = document.getElementById('year-select')
     const countrySelect = document.getElementById('country-select')
     const chartSelect = document.getElementById('chart-select')
+    const mapRadio = document.getElementById('radio-map')
+    const tableRadio = document.getElementById('radio-table')
+    const mapContainer = document.getElementById('map-container')
+    const queryTableContainer = document.getElementById('query-table-container')
 
-    const link = 'https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=scientificName=Puma+concolor'
+    const sampleURL = 'https://www.plantphenology.org/api/v1/query/_search?pretty&size=1&q=genus:Quercus'
+    
+    // const requestOptions = {
+    //     "from" : 0, "size" : 10,
+    //     "_source": ["latitude", "longitude", "dayOfYear", "year", "source"],
+    //     "query": {
+    //         "bool": {
+    //             "must": [
+    //                 { "match ": { "genus": "Quercus" }},
+    //                 { "match": { "year": "2012" }}
+    //             ]
+    //         }
+    //     }
+    // }
 
-    function idk() {
-        fetch(link)
-        .then(res => res.json())
-        .then(data => console.log(data))
+    // Initialize Map
+    let map = L.map('map', {
+        minZoom: 2,
+        maxZoom: 25
+    })
+
+
+    /******************** 
+        QUERY PAGE 
+    *********************/
+    
+    // Search Button onclick
+    document.getElementById('search-btn').addEventListener('click', function() {
+        // If no options are selected
+        if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+            console.log('Please select at least one search term')
+        } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByScientificName(scientificNameSelect.value)   
+        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByYearCollected(yearSelect.value) 
+        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '') {
+            removeTable('query-table')
+            fetchByCountry(countrySelect.value)
+        } else if (scientificNameSelect.value == '' &&  yearSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByType(typeSelect.value)
+        }
+    })
+
+    // Query Page Map
+    function buildMap() {
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    
+        L.marker([51.5, -0.09]).addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            .openPopup();
+
+            map.setView([0,0], 0)
+            map.setZoom(1)
     }
 
-    idk()
+    function fetchByScientificName(name) {
+        const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=10&q=scientificName=${name}`
+        // const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=20&_source=decimalLatitude,decimalLongitude,yearCollected,measurementType,measurementUnit,measurementValue,country,sex,scientificName&q=scientificName=${name}`
+
+        fetch(scientificNameURL)
+        .then(res => res.json())
+        .then(data => {
+            let dataArr = data.hits.hits
+
+            // If Table Radio is selected, build table
+            if (tableRadio.checked == true && mapRadio.checked == false) {
+                queryTableContainer.style.display = 'flex'
+                mapContainer.style.display = 'none'
+                buildQueryTable('query-table')
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                    if (name == x.scientificName) {
+                        let table = document.getElementById('query-table')
+                        // console.log(x);
+                        let tr = document.createElement('tr')
+                        tr.innerHTML = `
+                        <td>${x.scientificName}</td>
+                        <td>${x.country}</td>
+                        <td>${x.yearCollected}</td>
+                        <td>${x.measurementType}</td>
+                        <td>${x.measurementValue}</td>
+                        <td>${x.measurementUnit}</td>
+                        <td>${x.sex}</td>
+                        `
+                        table.appendChild(tr)
+                    }
+                })
+            } else if (tableRadio.checked == false && mapRadio.checked == true) {
+                queryTableContainer.style.display = 'none'
+                mapContainer.style.display = 'flex'
+            } else {
+                console.log('Select map or table');
+            }
+        })
+    }
+
+    function fetchByYearCollected(year) {
+        const yearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=10&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=${year}`
+        fetch(yearURL)
+        .then(res => res.json())
+        .then(data => {
+            let dataArr = data.hits.hits
+
+            if (tableRadio.checked == true && mapRadio.checked == false) {
+                queryTableContainer.style.display = 'flex'
+                mapContainer.style.display = 'none'
+                let table = document.createElement('table')
+                table.id = 'query-table'
+        
+                let trHeader = document.createElement('tr')
+                trHeader.innerHTML = `
+                <th>Scientific Name</th>
+                <th>Country</th>
+                <th>Year Collected</th>
+                <th>Measurement Type</th>
+                <th>Measurement Value</th>
+                <th>Measurement Unit</th>
+                <th>Sex</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                `
+                queryTableContainer.appendChild(table)
+                table.appendChild(trHeader)
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                            
+                    if(year == x.yearCollected) {
+                        // console.log(x);
+                        // console.log(x.yearCollected)
+                        // console.log(x.scientificName)
+                        // console.log(x.decimalLatitude)
+                        // console.log(x.decimalLongitude)
+
+                        let tr = document.createElement('tr')
+                        tr.innerHTML = `
+                        <td>${x.scientificName}</td>
+                        <td>${x.country}</td>
+                        <td>${x.yearCollected}</td>
+                        <td>${x.measurementType}</td>
+                        <td>${x.measurementValue}</td>
+                        <td>${x.measurementUnit}</td>
+                        <td>${x.sex}</td>
+                        <td>${x.decimalLatitude}</td>
+                        <td>${x.decimalLongitude}</td>
+                        `
+                        table.appendChild(tr)
+                    }
+                            
+                })
+            } else if (tableRadio.checked == false && mapRadio.checked == true) {
+                queryTableContainer.style.display = 'none'
+                mapContainer.style.display = 'flex'
+            } else {
+                console.log('Select map or table');
+            }
+        })
+    }
+
+    function fetchByCountry(country) {
+        const countryURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=country=${country}`
+
+        fetch(countryURL)
+        .then(res => res.json())
+        .then(data => {
+            let dataArr = data.hits.hits
+
+            // If Table Radio is selected, build table
+            if (tableRadio.checked == true && mapRadio.checked == false) {
+                queryTableContainer.style.display = 'flex'
+                mapContainer.style.display = 'none'
+                buildQueryTable('query-table')
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                    if (country == x.country) {
+                        let table = document.getElementById('query-table')
+                        // console.log(x);
+                        let tr = document.createElement('tr')
+                        tr.innerHTML = `
+                        <td>${x.scientificName}</td>
+                        <td>${x.country}</td>
+                        <td>${x.yearCollected}</td>
+                        <td>${x.measurementType}</td>
+                        <td>${x.measurementValue}</td>
+                        <td>${x.measurementUnit}</td>
+                        <td>${x.sex}</td>
+                        `
+                        table.appendChild(tr)
+                    }
+                })
+            } else if (tableRadio.checked == false && mapRadio.checked == true) {
+                queryTableContainer.style.display = 'none'
+                mapContainer.style.display = 'flex'
+            } else {
+                console.log('Select map or table');
+            }
+        })
+        
+    }
+
+    function fetchByType(type) {
+        const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=measurementType=${type}`
+        
+        fetch(typeURL)
+        .then(res => res.json())
+        .then(data => {
+            let dataArr = data.hits.hits
+
+            // If Table Radio is selected, build table
+            if (tableRadio.checked == true && mapRadio.checked == false) {
+                queryTableContainer.style.display = 'flex'
+                mapContainer.style.display = 'none'
+                buildQueryTable('query-table')
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                    if (type == x.measurementType) {
+                        let table = document.getElementById('query-table')
+                        // console.log(x);
+                        let tr = document.createElement('tr')
+                        tr.innerHTML = `
+                        <td>${x.scientificName}</td>
+                        <td>${x.country}</td>
+                        <td>${x.yearCollected}</td>
+                        <td>${x.measurementType}</td>
+                        <td>${x.measurementValue}</td>
+                        <td>${x.measurementUnit}</td>
+                        <td>${x.sex}</td>
+                        `
+                        table.appendChild(tr)
+                    }
+                })
+            } else if (tableRadio.checked == false && mapRadio.checked == true) {
+                queryTableContainer.style.display = 'none'
+                mapContainer.style.display = 'flex'
+            } else {
+                console.log('Select map or table');
+            }
+
+        })
+    }
 
     /******************** 
         NAVIGATION 
@@ -23,36 +267,29 @@ window.onload = function() {
 
     const browseBtn = document.getElementById('browse-nav')
     const queryNav = document.getElementById('query-nav')
+    const homeNav = document.getElementById('home-nav')
+
+    homeNav.addEventListener('click', function() {
+        queryNav.classList.remove('nav-btn')
+        browseBtn.classList.remove('nav-btn')
+        homeNav.classList.add('nav-btn')
+        openPage('home-tab')
+    })
 
     browseBtn.addEventListener('click', function() {
         queryNav.classList.remove('nav-btn')
+        homeNav.classList.remove('nav-btn')
         browseBtn.classList.add('nav-btn')
         openPage('browse-tab')
     })
 
     queryNav.addEventListener('click', function() {
         browseBtn.classList.remove('nav-btn')
+        homeNav.classList.remove('nav-btn')
         queryNav.classList.add('nav-btn')
         openPage('query-tab')
         buildMap()
     })
-
-    /******************** 
-            MODAL 
-    *********************/
-
-    let modal = document.getElementById("detail-modal");
-    let span = document.getElementsByClassName("close")[0];
-
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-        }
-    }
 
     /******************** 
         BROWSE TAB 
@@ -91,6 +328,8 @@ window.onload = function() {
         let obj = []
 
         data.forEach(species => {
+            let option = new Option(`${species.scientificName}`, `${species.scientificName}`)
+            scientificNameSelect.appendChild(option)
             scientificName.push(species.scientificName)
             values.push(species.value)
             obj.push(species)
@@ -245,7 +484,7 @@ window.onload = function() {
             const data = await res.json()
 
             data.forEach(x => {
-                console.log(x);
+                // console.log(x);
 
                 let modalTable = document.getElementById('modal-table')
                 let tr = document.createElement('tr')
@@ -300,7 +539,9 @@ window.onload = function() {
                 tr.addEventListener('click', function() {
                     targetId.push(project.projectId)
                     modal.style.display = "block"
+                    buildModalTable('modal-table-container', 'modal-table')
                     speciesByProjId(project.projectId)
+
                     // console.log('id clicked on:', project.projectId)
                 })
 
@@ -316,28 +557,32 @@ window.onload = function() {
         })
     }
 
-
     /******************** 
-        QUERY PAGE 
+            MODAL 
     *********************/
-    
-    // Search Button onclick
-    document.getElementById('search-btn').addEventListener('click', function() {
-        console.log(scientificNameInput.value.trim())
-    })
 
-    // Query Page Map
-    function buildMap() {
-        let map = L.map('map').setView([51.505, -0.09], 13);
+   let modal = document.getElementById("detail-modal");
+   let span = document.getElementsByClassName("close")[0];
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-    
-        L.marker([51.5, -0.09]).addTo(map)
-            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-            .openPopup();
-    }
+   span.onclick = function() {
+       modal.style.display = "none";
+    //    removePreviousTr('modal-table')
+    removeTable('modal-table')
+   }
+
+   window.onclick = function(event) {
+   if (event.target == modal) {
+       modal.style.display = "none";
+       }
+   }
+
+   // TODO: FIX THIS
+//    function removePreviousTr(id) {
+//        let tbl = document.getElementById(id)
+//        while (tbl.rows.length > 1) {
+//            tbl.deleteRow(0);
+//          }
+//    }
 
     /******************** 
         OTHER FUNCTIONS 
@@ -349,7 +594,6 @@ window.onload = function() {
         for (let i = 0; i < tabcontent.length; i++) {
           tabcontent[i].style.display = "none";
         }
-      
         // Show the specific tab content
         document.getElementById(pageName).style.display = "flex";
       }
@@ -382,6 +626,47 @@ window.onload = function() {
         })
     }
 
+    // Remove any table generic function
+    function removeTable(tableId) {
+        let table = document.getElementById(tableId)
+        if (table) {
+            table.parentNode.removeChild(table)
+        }
+    }
+
+    //Build modal table
+    function buildModalTable(containerId, tableId) {
+        const containerDiv = document.getElementById(containerId)
+        let table = document.createElement('table')
+        table.id = tableId
+        let headerTr = document.createElement('tr')
+        headerTr.innerHTML = `
+        <th>Species</th>
+        <th>Count</th>
+        `
+        table.appendChild(headerTr)
+        containerDiv.appendChild(table)
+    }
+
+    // Build table for query page
+    function buildQueryTable(tableId) {
+        let table = document.createElement('table')
+        table.id = tableId
+
+        let trHeader = document.createElement('tr')
+        trHeader.innerHTML = `
+        <th>Scientific Name</th>
+        <th>Country</th>
+        <th>Year Collected</th>
+        <th>Measurement Type</th>
+        <th>Measurement Value</th>
+        <th>Measurement Unit</th>
+        <th>Sex</th>
+        `
+        queryTableContainer.appendChild(table)
+        table.appendChild(trHeader)
+    }
+
     //Generic Horizontal Bar Chart
     async function makeBarChart(xAxisLabels, title, values) {
         const purple = 'rgba(153, 102, 255, 0.2)'
@@ -399,6 +684,7 @@ window.onload = function() {
         window.barChart = new Chart(ctx, {
             type: 'horizontalBar',
             options: {
+                barThickness: 6,
             maintainAspectRatio: false,
             legend: {
                 display: true
