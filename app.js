@@ -6,12 +6,13 @@ window.onload = function() {
     const yearSelect = document.getElementById('year-select')
     const countrySelect = document.getElementById('country-select')
     const chartSelect = document.getElementById('chart-select')
+    const numberSelect = document.getElementById('number-results')
     const mapRadio = document.getElementById('radio-map')
     const tableRadio = document.getElementById('radio-table')
     const mapContainer = document.getElementById('map-container')
     const queryTableContainer = document.getElementById('query-table-container')
 
-    const sampleURL = 'https://www.plantphenology.org/api/v1/query/_search?pretty&size=1&q=genus:Quercus'
+    // const sampleURL = 'https://www.plantphenology.org/api/v1/query/_search?pretty&size=1&q=genus:Quercus'
     
     // const requestOptions = {
     //     "from" : 0, "size" : 10,
@@ -26,37 +27,13 @@ window.onload = function() {
     //     }
     // }
 
-    // Initialize Map
+    /******************** 
+      MAPPING FUNCTIONS
+    *********************/
     let map = L.map('map', {
         minZoom: 2,
         maxZoom: 25
     })
-
-
-    /******************** 
-        QUERY PAGE 
-    *********************/
-    
-    // Search Button onclick
-    document.getElementById('search-btn').addEventListener('click', function() {
-        // If no options are selected
-        if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
-            console.log('Please select at least one search term')
-        } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
-            removeTable('query-table')
-            fetchByScientificName(scientificNameSelect.value)   
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && countrySelect.value == '') {
-            removeTable('query-table')
-            fetchByYearCollected(yearSelect.value) 
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '') {
-            removeTable('query-table')
-            fetchByCountry(countrySelect.value)
-        } else if (scientificNameSelect.value == '' &&  yearSelect.value == '' && countrySelect.value == '') {
-            removeTable('query-table')
-            fetchByType(typeSelect.value)
-        }
-    })
-
 
     function addMapBaseLayer() {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,41 +48,64 @@ window.onload = function() {
             map.setZoom(1)
     }
 
-    // Query Page Map
-    function buildMap(content, lat, lon) {
-
-            let geojsonFeature = {
-                "type": "Feature",
-                "properties": {
-                    "name": "Coors Field",
-                    "amenity": "Baseball Stadium",
-                    "popupContent": content
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [`${lon}`, `${lat}`]
-                }
-            };
+    function plotPoint(sciName, content, lat, lon) {
+        let geojsonFeature = {
+            "type": "Feature",
+            "properties": {
+                "name": sciName,
+                "popupContent": content
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [`${lon}`, `${lat}`]
+            }
+        };
 
 
-            let geojsonMarkerOptions = {
-                radius: 8,
-                fillColor: "#ff7800",
-                color: "#000",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.8
-            };
-            
-            L.geoJSON(geojsonFeature, {
-                pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, geojsonMarkerOptions).bindPopup(feature.properties.popupContent)
-                }
-            }).addTo(map)
+        let options = {
+            radius: 8,
+            fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        };
+
+        L.geoJSON(geojsonFeature, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, options).bindPopup(feature.properties.name + feature.properties.popupContent)
+            }
+        }).addTo(map)
     }
 
-    function fetchByScientificName(name) {
-        const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=10&q=scientificName=${name}`
+
+    /******************** 
+        QUERY PAGE 
+    *********************/
+    
+    // Search Button onclick
+    document.getElementById('search-btn').addEventListener('click', function() {
+        // If no options are selected
+        if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+            console.log('Please select at least one search term')
+        } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByScientificName(numberSelect.value, scientificNameSelect.value)   
+        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByYearCollected(numberSelect.value, yearSelect.value) 
+        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '') {
+            removeTable('query-table')
+            fetchByCountry(numberSelect.value, countrySelect.value)
+        } else if (scientificNameSelect.value == '' &&  yearSelect.value == '' && countrySelect.value == '') {
+            removeTable('query-table')
+            fetchByType(numberSelect.value, typeSelect.value)
+        }
+    })
+
+
+    function fetchByScientificName(number, name) {
+        const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
         // const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=20&_source=decimalLatitude,decimalLongitude,yearCollected,measurementType,measurementUnit,measurementValue,country,sex,scientificName&q=scientificName=${name}`
 
         fetch(scientificNameURL)
@@ -141,13 +141,13 @@ window.onload = function() {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
             } else {
-                console.log('Select map or table');
+                alert('Select Map or Table');
             }
         })
     }
 
-    function fetchByYearCollected(year) {
-        const yearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=10&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=${year}`
+    function fetchByYearCollected(number, year) {
+        const yearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=${year}`
         fetch(yearURL)
         .then(res => res.json())
         .then(data => {
@@ -208,17 +208,19 @@ window.onload = function() {
 
                     if (year == x.yearCollected) {
                         console.log('LAT: ' + x.decimalLatitude + ' LON: ' + x.decimalLongitude);
-                        buildMap(year, x.decimalLatitude, x.decimalLongitude)
+                        plotPoint(x.scientificName, year, x.decimalLatitude, x.decimalLongitude)
+                    } else {
+                        console.log(x, 'coordinates for this year not found');
                     }
                 })
             } else {
-                console.log('Select map or table');
+                alert('Select Map or Table');
             }
         })
     }
 
-    function fetchByCountry(country) {
-        const countryURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=country=${country}`
+    function fetchByCountry(number, country) {
+        const countryURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=country=${country}`
 
         fetch(countryURL)
         .then(res => res.json())
@@ -253,14 +255,14 @@ window.onload = function() {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
             } else {
-                console.log('Select map or table');
+                alert('Select Map or Table');
             }
         })
         
     }
 
-    function fetchByType(type) {
-        const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=5&q=measurementType=${type}`
+    function fetchByType(number, type) {
+        const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=measurementType=${type}`
         
         fetch(typeURL)
         .then(res => res.json())
@@ -295,7 +297,7 @@ window.onload = function() {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
             } else {
-                console.log('Select map or table');
+                alert('Select Map or Table');
             }
 
         })
