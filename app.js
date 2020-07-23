@@ -12,21 +12,6 @@ window.onload = function() {
     const mapContainer = document.getElementById('map-container')
     const queryTableContainer = document.getElementById('query-table-container')
 
-    // const sampleURL = 'https://www.plantphenology.org/api/v1/query/_search?pretty&size=1&q=genus:Quercus'
-    
-    // const requestOptions = {
-    //     "from" : 0, "size" : 10,
-    //     "_source": ["latitude", "longitude", "dayOfYear", "year", "source"],
-    //     "query": {
-    //         "bool": {
-    //             "must": [
-    //                 { "match ": { "genus": "Quercus" }},
-    //                 { "match": { "year": "2012" }}
-    //             ]
-    //         }
-    //     }
-    // }
-
     /******************** 
       MAPPING FUNCTIONS
     *********************/
@@ -39,10 +24,6 @@ window.onload = function() {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-    
-        // L.marker([51.5, -0.09]).addTo(map)
-        //     .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-        //     .openPopup();
     
             map.setView([0,0], 0)
             map.setZoom(1)
@@ -77,9 +58,10 @@ window.onload = function() {
     
     // Search Button onclick
     document.getElementById('search-btn').addEventListener('click', function() {
+
         // If no options are selected
         if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
-            console.log('Please select at least one search term')
+            alert('Please select at least one search term')
         } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
             removeTable('query-table')
             fetchByScientificName(numberSelect.value, scientificNameSelect.value)   
@@ -218,7 +200,6 @@ window.onload = function() {
                     let x = hit._source
                     if (country == x.country) {
                         let table = document.getElementById('query-table')
-                        // console.log(x);
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                         <td>${x.scientificName}</td>
@@ -241,6 +222,7 @@ window.onload = function() {
         })
         
     }
+
 
     function fetchByType(number, type) {
         const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=measurementType=${type}`
@@ -598,14 +580,6 @@ window.onload = function() {
        modal.style.display = "none";
        }
    }
-
-   // TODO: FIX THIS
-//    function removePreviousTr(id) {
-//        let tbl = document.getElementById(id)
-//        while (tbl.rows.length > 1) {
-//            tbl.deleteRow(0);
-//          }
-//    }
 
     /******************** 
         OTHER FUNCTIONS 
