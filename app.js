@@ -58,30 +58,51 @@ window.onload = function() {
     
     // Search Button onclick
     document.getElementById('search-btn').addEventListener('click', function() {
+        let sciName = scientificNameSelect.value.replace(' ', '+')
+        let type = typeSelect.value.replace(' ', '+')
+        let year = yearSelect.value
+        let country = countrySelect.value.replace(' ', '+')
+        let number = numberSelect.value
+
 
         // If no options are selected
-        if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+        if (sciName == '' && type == '' && year == '' && country == '') {
             alert('Please select at least one search term')
-        } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+        } else if (type == '' && year == '' && country == '') {
             removeTable('query-table')
-            fetchByScientificName(numberSelect.value, scientificNameSelect.value)   
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && countrySelect.value == '') {
+            fetchByScientificName(number, sciName)   
+        } else if (sciName == '' && type == '' && country == '') {
             removeTable('query-table')
-            fetchByYearCollected(numberSelect.value, yearSelect.value) 
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '') {
+            fetchByYearCollected(number, year) 
+        } else if (sciName == '' && type == '' && year == '') {
             removeTable('query-table')
-            fetchByCountry(numberSelect.value, countrySelect.value)
-        } else if (scientificNameSelect.value == '' &&  yearSelect.value == '' && countrySelect.value == '') {
+            fetchByCountry(number, country)
+        } else if (sciName == '' &&  year == '' && country == '') {
             removeTable('query-table')
-            fetchByType(numberSelect.value, typeSelect.value)
+            fetchByType(number, type)
+        } else if (sciName && type && year && country) {
+            // const scientificNameURL = "https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=100&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=2002+AND++yearCollected:%3C=2003++AND++scientificName:Puma+concolor++AND++measurementType:body+mass++AND++country:USA&pretty"
+            const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=10&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=1868+AND++yearCollected:%3C=${year}++AND++scientificName:${sciName}++AND++measurementType:${type}++AND++country:${country}&pretty`
+            //TODO: figure this out and why its not working
+            console.log(scientificNameURL);
+            fetchData(scientificNameURL)
         }
     })
+
+    function fetchData(URL) {
+        fetch(URL)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data.hits.hits);
+        })
+    }
 
 
     function fetchByScientificName(number, name) {
         // const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
-        const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=2020`
-
+        // const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=2020`
+        const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=1868+AND++yearCollected:%3C=2020++AND++scientificName:${name}++AND++sex:male&pretty`
+        console.log(scientificNameURL);
         fetch(scientificNameURL)
         .then(res => res.json())
         .then(data => {
@@ -95,6 +116,7 @@ window.onload = function() {
 
                 dataArr.forEach(hit => {
                     let x = hit._source
+                    console.log(x)
                     if (name == x.scientificName) {
                         let table = document.getElementById('query-table')
                         let tr = document.createElement('tr')
