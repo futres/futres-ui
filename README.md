@@ -1,9 +1,11 @@
 # futres-ui
 
 ## running examples:
-[production (master branch)](futresdataportal-develop.netlify.app)
+We have setup running examples of the website here:
 
-[development (develop branch)](futresdataportal-develop.netlify.app)
+production (master branch): https://futresdataportal.netlify.app/
+
+development (develop branch): https://futresdataportal-develop.netlify.app/
 
 ## API
 The FuTRES API takes data from GEOME and loaded datasets from Cyverse DE
