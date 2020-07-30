@@ -40,15 +40,20 @@ window.onload = function() {
                 "type": "Point",
                 "coordinates": [lon, lat]
             }
-        };
+        }
 
-        let zoom = 5
-        let marker = L.marker([0,0], 3).addTo(map)
-        marker.setLatLng([lat,lon])
-        .bindPopup(`Scientific Name: ${geojsonFeature.properties.name} <br>
-        Year Collected: ${geojsonFeature.properties.popupContent}`)
+        if (lat == undefined && lon == undefined) {
+            console.log('lat long not found')
+        } else {
+            let zoom = 5
+            let marker = L.marker([0,0], 3).addTo(map)
+            marker.setLatLng([lat,lon])
+            .bindPopup(`Scientific Name: ${geojsonFeature.properties.name} <br>
+            Year Collected: ${geojsonFeature.properties.popupContent}`)
+    
+            map.setView([lat, lon], zoom)
+        }
 
-        map.setView([lat, lon], zoom)
     }
 
 
@@ -58,36 +63,93 @@ window.onload = function() {
     
     // Search Button onclick
     document.getElementById('search-btn').addEventListener('click', function() {
+        let sciName = scientificNameSelect.value
+        let type = typeSelect.value
+        let year = yearSelect.value
+        let country = countrySelect.value
+        let number = numberSelect.value
+
+
+        // Values for inserting into URLs
+        let sciNameEncoded = encodeURIComponent(sciName)
+        let typeEncoded = encodeURIComponent(type)
+        let countryEncoded = encodeURIComponent(country)
+
 
         // If no options are selected
-        if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+        if (sciName == '' && type == '' && year == '' && country == '') {
             alert('Please select at least one search term')
-        } else if (typeSelect.value == '' && yearSelect.value == '' && countrySelect.value == '') {
+        
+        } else if (type == '' && year == '' && country == '') {
             removeTable('query-table')
-            fetchByScientificName(numberSelect.value, scientificNameSelect.value)   
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && countrySelect.value == '') {
+            fetchByScientificName(number, sciName, sciNameEncoded)   
+        
+        } else if (sciName == '' && type == '' && country == '') {
             removeTable('query-table')
-            fetchByYearCollected(numberSelect.value, yearSelect.value) 
-        } else if (scientificNameSelect.value == '' && typeSelect.value == '' && yearSelect.value == '') {
+            fetchByYearCollected(number, year) 
+        
+        } else if (sciName == '' && type == '' && year == '') {
             removeTable('query-table')
-            fetchByCountry(numberSelect.value, countrySelect.value)
-        } else if (scientificNameSelect.value == '' &&  yearSelect.value == '' && countrySelect.value == '') {
+            //TODO: Figure out why this does not work
+            fetchByCountry(number, country, countryEncoded)
+        
+        } else if (sciName == '' &&  year == '' && country == '') {
             removeTable('query-table')
-            fetchByType(numberSelect.value, typeSelect.value)
+            fetchByType(number, type, typeEncoded)
+
+        } else if (sciName && type && year && country) {
+            removeTable('query-table')
+            // const url = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=10&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=1868+AND++yearCollected:%3C=${year}++AND++scientificName:${sciName}++AND++measurementType:${type}++AND++country:${country}&pretty`
+            // const scientificNameURL = "https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=100&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=2002+AND++yearCollected:%3C=2003++AND++scientificName:Puma+concolor++AND++measurementType:body+mass++AND++country:USA&pretty"
+            const allFieldsURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++scientificName:${sciNameEncoded}++AND++measurementType:${typeEncoded}++AND++country:${countryEncoded}&pretty`
+            fetchData(allFieldsURL)
+        } else if (sciName && type) {
+            const nameAndTypeURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++scientificName:${sciNameEncoded}++AND++measurementType:${typeEncoded}&pretty`
+            fetchData(nameAndTypeURL)
+
+        } else if (sciName && year) {
+            const nameYearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++scientificName:${sciNameEncoded}&pretty`
+            fetchData(nameYearURL)
+
+        } else if (sciName && country) {
+            const sciNameAndCountryURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++scientificName:${sciNameEncoded}++AND++country:${countryEncoded}&pretty`
+            fetchData(sciNameAndCountryURL)
+
+        } else if (type && year) {
+            const typeYearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++measurementType:${typeEncoded}&pretty`
+            fetchData(typeYearURL)
+
+        } else if (country && year) {
+            const countryYearURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++country:${countryEncoded}&pretty`
+            fetchData(countryYearURL)
+
+        } else if (type && country) {
+            const typeCountryURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++measurementType:${typeEncoded}++AND++country:${countryEncoded}&pretty`
+            fetchData(typeCountryURL)
+
+        } else if (type && year && sciName) {
+            console.log(sciName, type, year);
+            //TODO: Why does year not register
+            const typeYearNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++scientificName:${sciNameEncoded}++AND++measurementType:${typeEncoded}&pretty`
+            fetchData(typeYearNameURL)
+
+        } else if (country && year && sciName) {
+            const countryYearNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++scientificName:${sciNameEncoded}++AND++country:${countryEncoded}&pretty`
+            fetchData(countryYearNameURL)
+
+        } else if (type && year && country) {
+            const typeYearCountryURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:${year}++AND++measurementType:${typeEncoded}++AND++country:${countryEncoded}&pretty`
+            fetchData(typeYearCountryURL)
         }
     })
 
-
-    function fetchByScientificName(number, name) {
-        // const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
-        const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:>=1868+AND++yearCollected:<=2020`
-
-        fetch(scientificNameURL)
+    function fetchData(URL) {
+        fetch(URL)
         .then(res => res.json())
         .then(data => {
+            // console.log(data.hits.hits);
             let dataArr = data.hits.hits
 
-            // If Table Radio is selected, build table
             if (tableRadio.checked == true && mapRadio.checked == false) {
                 queryTableContainer.style.display = 'flex'
                 mapContainer.style.display = 'none'
@@ -95,7 +157,8 @@ window.onload = function() {
 
                 dataArr.forEach(hit => {
                     let x = hit._source
-                    if (name == x.scientificName) {
+                    // console.log(x.measurementType);
+                    //     console.log(x.scientificName)
                         let table = document.getElementById('query-table')
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
@@ -110,7 +173,56 @@ window.onload = function() {
                         <td>${x.decimalLongitude}</td>
                         `
                         table.appendChild(tr)
-                    }
+                })
+            } else if (tableRadio.checked == false && mapRadio.checked == true) {
+                queryTableContainer.style.display = 'none'
+                mapContainer.style.display = 'flex'
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                    plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
+                })
+            } else {
+                alert('Select Map or Table');
+            }
+        })
+    }
+
+
+    function fetchByScientificName(number, name, uriName) {
+    // const scientificNameURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=scientificName=${name}`
+    // const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++scientificName:${name}&pretty`
+
+        const scientificNameURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++yearCollected:%3E=1868+AND++yearCollected:%3C=2020++AND++scientificName:${uriName}&pretty`
+
+        // console.log(scientificNameURL);
+        fetch(scientificNameURL)
+        .then(res => res.json())
+        .then(data => {
+            let dataArr = data.hits.hits
+
+            // If Table Radio is selected, build table
+            if (tableRadio.checked == true && mapRadio.checked == false) {
+                queryTableContainer.style.display = 'flex'
+                mapContainer.style.display = 'none'
+                buildQueryTable('query-table')
+
+                dataArr.forEach(hit => {
+                    let x = hit._source
+                        let table = document.getElementById('query-table')
+                        let tr = document.createElement('tr')
+                        tr.innerHTML = `
+                        <td>${x.scientificName}</td>
+                        <td>${x.country}</td>
+                        <td>${x.yearCollected}</td>
+                        <td>${x.measurementType}</td>
+                        <td>${x.measurementValue}</td>
+                        <td>${x.measurementUnit}</td>
+                        <td>${x.sex}</td>
+                        <td>${x.decimalLatitude}</td>
+                        <td>${x.decimalLongitude}</td>
+                        `
+                        table.appendChild(tr)
                 })
             } else if (tableRadio.checked == false && mapRadio.checked == true) {
                 queryTableContainer.style.display = 'none'
@@ -120,8 +232,6 @@ window.onload = function() {
                     let x = hit._source
                     if (name == x.scientificName) {
                         plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
-                    } else {
-                        console.log('no coordinates found for: ' + name)
                     }
                 })
             } else {
@@ -172,8 +282,6 @@ window.onload = function() {
                     if (year == x.yearCollected) {
                         console.log('LAT: ' + x.decimalLatitude + ' LON: ' + x.decimalLongitude);
                         plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
-                    } else {
-                        console.log('coordinates for this year not found');
                     }
                 })
             } else {
@@ -182,13 +290,18 @@ window.onload = function() {
         })
     }
 
-    function fetchByCountry(number, country) {
-        const countryURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=country=${country}`
+    //TODO: Figure out why this does not work
+    function fetchByCountry(number, country, uriCountry) {
+        console.log(uriCountry, country);
+        // const countryURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=country:${uriCountry}`
+        const countryURL = `https://www.plantphenology.org/futresapi/v1/query/_search?from=0&size=${number}&_source=decimalLatitude,decimalLongitude,yearCollected,scientificName,sex,measurementType,country,measurementUnit,measurementValue&q=++country:${uriCountry}&pretty`
 
+        console.log(countryURL);
         fetch(countryURL)
         .then(res => res.json())
         .then(data => {
             let dataArr = data.hits.hits
+            console.log(dataArr);
 
             // If Table Radio is selected, build table
             if (tableRadio.checked == true && mapRadio.checked == false) {
@@ -198,7 +311,7 @@ window.onload = function() {
 
                 dataArr.forEach(hit => {
                     let x = hit._source
-                    if (country == x.country) {
+                    console.log(x.country)
                         let table = document.getElementById('query-table')
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
@@ -211,11 +324,19 @@ window.onload = function() {
                         <td>${x.sex}</td>
                         `
                         table.appendChild(tr)
-                    }
+                    
                 })
             } else if (tableRadio.checked == false && mapRadio.checked == true) {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
+                dataArr.forEach(hit => {
+                    let x = hit._source
+
+                    if (country == x.country) {
+                        console.log('LAT: ' + x.decimalLatitude + ' LON: ' + x.decimalLongitude);
+                        plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
+                    }
+                })
             } else {
                 alert('Select Map or Table');
             }
@@ -223,9 +344,8 @@ window.onload = function() {
         
     }
 
-
-    function fetchByType(number, type) {
-        const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=measurementType=${type}`
+    function fetchByType(number, type, uriType) {
+        const typeURL = `https://plantphenology.org/futresapi/v1/query/_search?pretty&from=0&size=${number}&q=measurementType=${uriType}`
         
         fetch(typeURL)
         .then(res => res.json())
@@ -242,7 +362,6 @@ window.onload = function() {
                     let x = hit._source
                     if (type == x.measurementType) {
                         let table = document.getElementById('query-table')
-                        // console.log(x);
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                         <td>${x.scientificName}</td>
@@ -259,6 +378,14 @@ window.onload = function() {
             } else if (tableRadio.checked == false && mapRadio.checked == true) {
                 queryTableContainer.style.display = 'none'
                 mapContainer.style.display = 'flex'
+                dataArr.forEach(hit => {
+                    let x = hit._source
+
+                    if (type == x.measurementType) {
+                        console.log('LAT: ' + x.decimalLatitude + ' LON: ' + x.decimalLongitude);
+                        plotPoint(x.scientificName, x.yearCollected, x.decimalLatitude, x.decimalLongitude)
+                    }
+                })
             } else {
                 alert('Select Map or Table');
             }
@@ -350,7 +477,6 @@ window.onload = function() {
     async function speciesTableData() {
         const data = await getSpecies()
         let species = data.obj
-        // console.log(species);
 
         species.forEach(x => {
             const speciesTable = document.getElementById('species-table')
@@ -489,7 +615,6 @@ window.onload = function() {
             const data = await res.json()
 
             data.forEach(x => {
-                // console.log(x);
 
                 let modalTable = document.getElementById('modal-table')
                 let tr = document.createElement('tr')
@@ -517,7 +642,6 @@ window.onload = function() {
 
         data.forEach(project => {
             if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
-                // console.log(project.projectId);
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
