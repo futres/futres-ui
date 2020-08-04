@@ -1,6 +1,7 @@
 window.onload = function() {
     const apiBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/'
-    const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
+    //const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
+    const projBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/projects.json'
     const scientificNameSelect = document.getElementById('scientific-name-select')
     const typeSelect = document.getElementById('measurement-type-select')
     const yearSelect = document.getElementById('year-select')
