@@ -642,7 +642,8 @@ window.onload = function() {
         // console.log(targetId, '<---- in the array')
 
         data.forEach(project => {
-            if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
+            //if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
+            if ((project.discoverable == "True" || project.public == "True") && project.entityStats.DiagnosticsCount > 0) {
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
