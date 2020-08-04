@@ -1,6 +1,7 @@
 window.onload = function() {
     const apiBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/'
-    const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
+    //const projBaseURL = 'https://api.geome-db.org/projects/stats?includePublic=true'
+    const projBaseURL = 'https://raw.githubusercontent.com/futres/FutresAPI/master/data/projects.json'
     const scientificNameSelect = document.getElementById('scientific-name-select')
     const typeSelect = document.getElementById('measurement-type-select')
     const yearSelect = document.getElementById('year-select')
@@ -641,7 +642,8 @@ window.onload = function() {
         // console.log(targetId, '<---- in the array')
 
         data.forEach(project => {
-            if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
+            //if (project.projectConfiguration.id == 70 && project.discoverable == true && project.entityStats.DiagnosticsCount > 0) {
+            if ((project.discoverable == "True" || project.public == "True") && project.entityStats.DiagnosticsCount > 0) {
                 let arr = project.projectTitle.split('_').toString()
                 let noCommas = arr.replace(/,/g, ' ')
                 let title = noCommas.replace(/FuTRES/g, '')
