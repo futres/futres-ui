@@ -1,11 +1,10 @@
 /* BROWSE TAB */
 #browse-tab {
     display: flex;
-    justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0 5px;
+    padding: 0;
 }
 
 .page-h {
@@ -51,7 +50,7 @@
     margin-left: 5px;
   }
   
-  .active:after {
+.active:after {
     content: "\25B2"; /* Unicode character for up arrow (A) */
     color: #2c3e50;
     font-size: large;
@@ -68,8 +67,12 @@
 }
 
 #chart-selects-container {
-    width: 50%;
+    min-width: 50%;
     margin: auto;
+}
+
+#chart-selects-container select{
+    width: 100%;
 }
 
 #chart-container {
@@ -80,10 +83,11 @@
 /* PROJECTS */
 #projects-wrapper {
     width: 100%;
+    padding: 0;
 }
 
 #project-table {
-    width: 100%;
+    width: 100vw;
     text-align: left;
     border: 1px solid grey;
 }
@@ -99,12 +103,13 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
+    padding: 0;
 }
 
 #tables-wrapper > div {
     border: 1px solid grey;
     width: 25%;
-    height: 482px;
+    height: 75vh;
     overflow: auto;
     white-space:nowrap;
     border-spacing:0;
