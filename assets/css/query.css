@@ -1,0 +1,68 @@
+/* QUERY TAB */
+#query-tab {
+    width: 100%;
+    padding: 0 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+.selects-container {
+    margin: 5px;
+    padding: 5px;
+    width: 30%;
+}
+
+.select-labels {
+    margin: 5px;
+}
+
+#scientific-name-input, select {
+    margin: 5px 5px 10px 5px;
+    padding: 5px 10px;
+    width: 95%;
+}
+
+#number-results {
+    min-width: 10%;
+    max-width: 15%;
+    padding: 2px;
+}
+
+/* Search button */
+.btn-all {
+    margin: 10px;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 50px;
+    font-family: "Montserrat", sans-serif;
+    color: oldlace;
+    background-color: #cc8e35;
+    font-size: large;
+    min-width: 30%;
+}
+
+#map-container {
+    flex:1;
+    width: 60%;
+}
+
+#map {
+    height: 92vh;
+    flex: 1;
+}
+
+.radio-label {
+    margin: 5px;
+}
+
+/* QUERY TABLE */
+#query-table-container {
+    width: 64%;
+    border: 1px solid grey;
+    height: 85vh;
+    overflow: auto;
+}
+
+#query-table {
+    width: 100%;
+}
