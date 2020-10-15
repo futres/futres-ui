@@ -49,7 +49,7 @@ window.onload = function() {
 
    async function showSpeciesChart() {
        const data = await getSpecies()
-       makeBarChart(data.scientificName, 'Species By Scientific Name', data.values)
+       makeChart('horizontalBar', data.scientificName, 'Species By Scientific Name', data.values)
    }
 
    async function speciesTableData() {
@@ -87,7 +87,7 @@ window.onload = function() {
 
    async function showMeasurementTypeChart() {
        const data = await getMeasurementType()
-       makeBarChart(data.type, 'Measurement Types', data.values)
+       makeChart('bar', data.type, 'Measurement Types', data.values)
    }
 
    async function measurementTypeTableData() {
@@ -124,7 +124,7 @@ window.onload = function() {
 
    async function showYearCollectedChart() {
        const data = await getYearCollected()
-       makeLineChart(data.yearCollected, 'Year Collected', data.values)
+       makeChart('line', data.yearCollected, 'Year Collected', data.values)
    }
 
    async function yearCollectedTableData() {
@@ -177,7 +177,7 @@ window.onload = function() {
 
    async function showCountriesChart() {
        const data = await getCountry()
-       makeBarChart(data.countries, 'Countries', data.values)
+       makeChart('bar', data.countries, 'Countries', data.values)
    }
 
 
@@ -308,8 +308,9 @@ let coll = document.getElementsByClassName("collapsible-button");
         }
     }
 
-    //Generic Horizontal Bar Chart
-    async function makeBarChart(xAxisLabels, title, values) {
+    //Generic Chart Function
+
+    async function makeChart(chartType, xAxisLabels, title, values) {
         const purple = 'rgba(153, 102, 255, 0.2)'
         const darkerPurple = 'rgba(153, 102, 255, 1)'
         let chartContainer = document.getElementById('chart-container')
@@ -323,44 +324,7 @@ let coll = document.getElementsByClassName("collapsible-button");
         let ctx = document.getElementById('dataChart').getContext('2d');
 
         window.barChart = new Chart(ctx, {
-            type: 'horizontalBar',
-            options: {
-                barThickness: 4,
-                maintainAspectRatio: false,
-                legend: {
-                    display: true
-                }
-            },
-            data: {
-            labels: xAxisLabels,
-            datasets: [
-                {
-                label: title,
-                data: values,
-                backgroundColor: purple,
-                borderColor: darkerPurple,
-                borderWidth: 1
-                }
-            ]
-            }
-        });
-    }
-
-    async function makeLineChart(xAxisLabels, title, values) {
-        const purple = 'rgba(153, 102, 255, 0.2)'
-        const darkerPurple = 'rgba(153, 102, 255, 1)'
-        let chartContainer = document.getElementById('chart-container')
-
-        let canvas = document.createElement('canvas')
-        canvas.id = 'dataChart'
-        canvas.width = '500px'
-        canvas.height = '600px'
-        chartContainer.appendChild(canvas)
-
-        let ctx = document.getElementById('dataChart').getContext('2d');
-
-        window.barChart = new Chart(ctx, {
-            type: 'line',
+            type: chartType,
             options: {
                 barThickness: 4,
                 maintainAspectRatio: false,
