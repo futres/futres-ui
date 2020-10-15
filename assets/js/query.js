@@ -218,6 +218,7 @@ function fetchByScientificName(number, name, uriName) {
 
             dataArr.forEach(hit => {
                 let x = hit._source
+                console.log(x);
                     let table = document.getElementById('query-table')
                     let tr = document.createElement('tr')
                     tr.innerHTML = `

@@ -32,7 +32,7 @@ window.onload = function() {
    })
 
    async function getSpecies() {
-       const res = await fetch(`${apiBaseURL}scientificName.json`)
+       const res = await fetch(`${apiBaseURL}scientificName_top20.json`)
        const data = await res.json()
 
        let scientificName = []
@@ -124,7 +124,7 @@ window.onload = function() {
 
    async function showYearCollectedChart() {
        const data = await getYearCollected()
-       makeBarChart(data.yearCollected, 'Year Collected', data.values)
+       makeLineChart(data.yearCollected, 'Year Collected', data.values)
    }
 
    async function yearCollectedTableData() {
@@ -325,11 +325,48 @@ let coll = document.getElementsByClassName("collapsible-button");
         window.barChart = new Chart(ctx, {
             type: 'horizontalBar',
             options: {
-                barThickness: 6,
-            maintainAspectRatio: true,
-            legend: {
-                display: true
+                barThickness: 4,
+                maintainAspectRatio: false,
+                legend: {
+                    display: true
+                }
+            },
+            data: {
+            labels: xAxisLabels,
+            datasets: [
+                {
+                label: title,
+                data: values,
+                backgroundColor: purple,
+                borderColor: darkerPurple,
+                borderWidth: 1
+                }
+            ]
             }
+        });
+    }
+
+    async function makeLineChart(xAxisLabels, title, values) {
+        const purple = 'rgba(153, 102, 255, 0.2)'
+        const darkerPurple = 'rgba(153, 102, 255, 1)'
+        let chartContainer = document.getElementById('chart-container')
+
+        let canvas = document.createElement('canvas')
+        canvas.id = 'dataChart'
+        canvas.width = '500px'
+        canvas.height = '600px'
+        chartContainer.appendChild(canvas)
+
+        let ctx = document.getElementById('dataChart').getContext('2d');
+
+        window.barChart = new Chart(ctx, {
+            type: 'line',
+            options: {
+                barThickness: 4,
+                maintainAspectRatio: false,
+                legend: {
+                    display: true
+                }
             },
             data: {
             labels: xAxisLabels,
