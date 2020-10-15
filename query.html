@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CSS for Leaflet and local CSS-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/query.css">
+    
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+
+    <title>FuTRES Data Portal</title>
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo">FuTRES Data Portal</h1>
+        <nav>
+            <ul class="nav-links">
+                <li><a id="query-nav" class="nav-btn" href="query.html">Query</a></li>
+                <li><a id="browse-nav" href="browse.html">Browse</a></li>
+                <li><a id="home-nav" href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div id="query-tab">
+        <div class="selects-container">
+            <form> 
+                <label class="select-labels" for="scientific-name-select">Scientific Name:</label><br>
+                <select name="scientificName" id="scientific-name-select">
+                    <option value="">- Select a Scientific Name -</option>
+                </select> <br>
+
+            <label class="select-labels" for="measure-type-select">Measurement Type:</label><br>
+            <select name="measurement" id="measurement-type-select">
+                <option value="">- Select a Measurement Type -</option>
+            </select> <br>
+
+            <label class="select-labels" for="year-select">Year Collected:</label><br>
+            <select name="year" id="year-select">
+                <option value="">- Select Year Collected -</option>
+            </select> <br>
+
+            <label class="select-labels" for="country-select">Country:</label><br>
+            <select name="country" id="country-select">
+                <option value="">- Select a Country -</option>
+            </select><br>
+
+            <input type="radio" id="radio-map" name="display" value="map">
+            <label class="radio-label" for="map">Show on Map</label>
+            <input type="radio" id="radio-table" name="display" value="table" checked>
+            <label class="radio-label" for="table">Show in Table</label><br>
+
+            <label class="select-labels" for="number-results">Results:</label>
+            <select name="number" id="number-results">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="75">75</option>
+                <option value="100">100</option>
+                <option value="125">125</option>
+                <option value="150">150</option>
+                <option value="200">200</option>
+            </select><br>
+
+            <button id="search-btn" class="btn-all" type="button">Search</button>
+
+        </div> <!--selects div-->
+
+        <div id="map-container">
+            <div id="map">
+
+            </div> <!--map div-->
+        </div> <!--map container-->
+        <div id="query-table-container" style="display: none;">
+
+        </div>
+
+    </div> <!-- query tab div -->
+    <script type="text/javascript" src="assets/js/query.js"></script>
+</body>
+
+</html>

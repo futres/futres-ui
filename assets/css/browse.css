@@ -1,0 +1,201 @@
+/* BROWSE TAB */
+#browse-tab {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+}
+
+.page-h {
+    margin: 5px auto;
+    padding: 5px;
+}
+
+/* ACCORDION - COLLAPSIBLE DASH */
+.collapsible-button {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+}
+
+.active, .collapsible-button:hover {
+    background-color: #bdc3c7;
+}
+
+.collapsible-button:hover {
+    transition: 1s all ease;
+}
+
+.collapse-content {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: auto;
+    transition: max-height 0.2s ease-out;
+}
+
+.collapsible-button:after {
+    content: '\25BC'; /* Unicode character for down arrow (V) */
+    font-size: 13px;
+    color: #2c3e50;
+    font-size: large;
+    float: right;
+    margin-left: 5px;
+  }
+  
+.active:after {
+    content: "\25B2"; /* Unicode character for up arrow (A) */
+    color: #2c3e50;
+    font-size: large;
+}
+
+/* CHARTS */
+#chart-wrapper {
+    margin: auto;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-wrap: column wrap;
+    width: 100%;
+}
+
+#chart-selects-container {
+    min-width: 50%;
+    margin: auto;
+}
+
+#chart-selects-container select{
+    width: 100%;
+}
+
+#chart-container {
+    margin: 5px;
+    width: 100%;
+}
+
+/* PROJECTS */
+#projects-wrapper {
+    width: 100%;
+    padding: 0;
+}
+
+#project-table {
+    width: 100vw;
+    text-align: left;
+    border: 1px solid grey;
+}
+
+#project-table tr {
+    cursor: pointer;
+}
+
+/* TABLES */
+
+#tables-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+}
+
+#tables-wrapper > div {
+    border: 1px solid grey;
+    width: 25%;
+    height: 75vh;
+    overflow: auto;
+    white-space:nowrap;
+    border-spacing:0;
+    display:inline-block;
+}
+
+#country-table, #measure-table, #species-table, #year-table {
+    width: 100%;
+    text-align: left;
+}
+
+#country-table th, #measure-table th, #species-table th, #year-table th {
+    cursor: pointer;
+}
+
+/* Table heading arrows */
+.descending:before {
+    margin-right: 3px;
+    font-size: 9px;
+    content: '\25BC'; 
+    /* Unicode character for down arrow (V) */
+}
+
+.ascending:before {
+    margin-right: 3px;
+    font-size: 9px;
+    content: "\25B2"; 
+    /* Unicode character for up arrow (A) */
+}
+
+/* Table inside modal */
+
+#modal-table-container {
+    width: 90%;
+    margin: auto;
+    /* border: 2px solid red; */
+}
+
+#modal-table {
+    width: 50%;
+    margin: auto;
+    border: 1px solid grey;
+}
+
+/* MODAL */
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* PROJECT DETAIL PAGE */
+
+  #project-detail-container {
+    border: 2px solid red;
+}

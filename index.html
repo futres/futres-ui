@@ -3,18 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- CSS for Leaflet and local CSS-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
-    <link rel="stylesheet" href="style.css">
-    
-     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
 
     <title>FuTRES Data Portal</title>
 </head>
@@ -23,14 +13,14 @@
         <h1 class="logo">FuTRES Data Portal</h1>
         <nav>
             <ul class="nav-links">
-                <li><a id="query-nav" class="tablink">Query</a></li>
-                <li><a id="browse-nav" class="tablink">Browse</a></li>
-                <li><a id="home-nav" class="nav-btn">Home</a></li>
+                <li><a id="query-nav" href="query.html"> Query</a></li>
+                <li><a id="browse-nav" href="browse.html"> Browse</a></li>
+                <li><a id="home-nav" class="nav-btn" href="index.html"> Home</a></li>
             </ul>
         </nav>
     </header>
 
-    <div id="home-tab" class="tabcontent">
+    <div id="home-tab">
         <div id="hero-image">
             <div id="hero-text">
                 <h1 class="page-h">FuTRES Data Portal</h1>
@@ -39,205 +29,5 @@
         </div>
     </div>
 
-    <div id="query-tab" class="tabcontent">
-        <div class="selects-container">
-            <form> 
-                <label class="select-labels" for="scientific-name-select">Scientific Name:</label><br>
-                <select name="scientificName" id="scientific-name-select">
-                    <option value="">- Select a Scientific Name -</option>
-                </select> <br>
-
-            <label class="select-labels" for="measure-type-select">Measurement Type:</label><br>
-            <select name="measurement" id="measurement-type-select">
-                <option value="">- Select a Measurement Type -</option>
-            </select> <br>
-
-            <label class="select-labels" for="year-select">Year Collected:</label><br>
-            <select name="year" id="year-select">
-                <option value="">- Select Year Collected -</option>
-            </select> <br>
-
-            <label class="select-labels" for="country-select">Country:</label><br>
-            <select name="country" id="country-select">
-                <option value="">- Select a Country -</option>
-            </select><br>
-
-            <input type="radio" id="radio-map" name="display" value="map">
-            <label class="radio-label" for="map">Show on Map</label>
-            <input type="radio" id="radio-table" name="display" value="table">
-            <label class="radio-label" for="table">Show in Table</label><br>
-
-            <label class="select-labels" for="number-results">Results:</label>
-            <select name="number" id="number-results">
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="75">75</option>
-                <option value="100">100</option>
-                <option value="125">125</option>
-                <option value="150">150</option>
-                <option value="200">200</option>
-            </select><br>
-
-            <button id="search-btn" class="btn-all" type="button">Search</button>
-
-        </div> <!--selects div-->
-
-        <div id="map-container">
-            <div id="map">
-
-            </div> <!--map div-->
-        </div> <!--map container-->
-        <div id="query-table-container" style="display: none;">
-
-        </div>
-
-    </div> <!-- query tab div -->
-
-    <div id="browse-tab" class="tabcontent" style="display: none;">
-        <h2 class="page-h">Browse Data Visualization</h2>
-
-        <h2 class="collapsible-button">Charts</h2>
-        <div id="chart-wrapper" class="collapse-content">
-            <div id="chart-selects-container">
-                <select name="chart-select" id="chart-select">
-                    <option value="">- Select a Chart -</option>
-                    <option value="country">Countries</option>
-                    <option value="measurement-type">Measurement Type</option>
-                    <option value="year-collected">Year Collected</option>
-                    <option value="species">Species Collected</option>
-                </select> <br>
-            </div> <!--chart select container-->
-    
-            <div id="chart-container">
-                    <canvas id="dataChart" width="800" height="650"></canvas>
-            </div>
-        </div> <!-- chart wrapper -->
-
-        <h2 class="collapsible-button">Projects</h2>
-        <div id="projects-wrapper" class="collapse-content">
-            <div id="proj-table-container">
-                <table id="project-table">
-                    <thead>
-                        <tr class="no-hover">
-                            <th>Project Title</th>
-                            <th>Principal Investigator</th>
-                            <th>PI Affiliation</th>
-                            <th>Number of Measurements</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div> <!--projects wrapper-->
-
-        <h2 class="collapsible-button">Summary Tables</h2>
-        <div id="tables-wrapper" class="collapse-content">
-
-            <div id="year-table-container">
-                <table id="year-table">
-                        <tr class="no-hover">
-                            <th class="ascending" onclick="sortTable('year-table', 0)">Year Collected</th>
-                            <th class="ascending" onclick="sortTable('year-table', 1)">Count</th>
-                        </tr>
-                </table>
-            </div>
-
-            <div id="species-table-container">
-                <table id="species-table">
-                        <tr class="no-hover">
-                            <th class="ascending" onclick="sortTable('species-table', 0)">Species</th>
-                            <th class="ascending" onclick="sortTable('species-table', 1)">Count</th>
-                        </tr>
-                </table>
-            </div>
-
-            <div id="country-table-container">
-                <table id="country-table">
-                        <tr class="no-hover">
-                            <th class="ascending" onclick="sortTable('country-table', 0)">Country</th>
-                            <th class="ascending" onclick="sortTable('country-table', 1)">Count</th>
-                        </tr>
-                </table>
-            </div>
-
-            <div id="measure-table-container">
-                <table id="measure-table">
-                        <tr class="no-hover">
-                            <th class="ascending" onclick="sortTable('measure-table', 0)">Measurement Type</th>
-                            <th class="ascending" onclick="sortTable('measure-table', 1)">Count</th>
-                        </tr>
-                </table>
-            </div>
-
-        </div> <!--tables wrapper-->
-
-        <!-- The Modal -->
-    <div id="detail-modal" class="modal">
-
-        <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modal-table-container">
-
-        </div>
-        </div> <!--modal content-->
-  
-    </div> <!--modal -->
-    
-</div> <!-- browse tab-->
-
-<div id="project-detail-container" style="display: none;">
-    <div id="project-detail">
-        <h1>Hi there</h1>
-
-    </div>
-</div> <!-- project detail container -->
-
-        <!-- JS -->
-        <script type="text/javascript" src="app.js"></script>
-        <script>
-            function sortTable(tableId, n) {
-                let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-
-                table = document.getElementById(tableId);
-                switching = true;
-                dir = "asc";
-                while (switching) {
-                    switching = false;
-                    rows = table.getElementsByTagName("TR");
-
-                    for (i = 1; i < (rows.length - 1); i++) {
-                        shouldSwitch = false;
-                        x = rows[i].getElementsByTagName("TD")[n];
-                        y = rows[i + 1].getElementsByTagName("TD")[n];
-
-                        let cmpX=isNaN(parseInt(x.innerHTML))?x.innerHTML.toLowerCase():parseInt(x.innerHTML);
-                        let cmpY=isNaN(parseInt(y.innerHTML))?y.innerHTML.toLowerCase():parseInt(y.innerHTML);
-                        cmpX=(cmpX=='-')?0:cmpX;
-                        cmpY=(cmpY=='-')?0:cmpY;
-
-                        if (dir == "asc") {
-                            if (cmpX > cmpY) {
-                                shouldSwitch= true;
-                                break;
-                            }
-                        } else if (dir == "desc") {
-                            if (cmpX < cmpY) {
-                                shouldSwitch= true;
-                                break;
-                            }
-                        }
-                    }
-                    if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
-                        switchcount ++;      
-                    } else {
-                        if (switchcount == 0 && dir == "asc") {
-                            dir = "desc";
-                            switching = true;
-                        }
-                    }
-                }
-                }
-        </script>
 </body>
 </html>

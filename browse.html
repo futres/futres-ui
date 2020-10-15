@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/browse.css">
+
+    <!-- Chart Js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <title>FuTRES Data Portal</title>
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo">FuTRES Data Portal</h1>
+        <nav>
+            <ul class="nav-links">
+                <li><a id="query-nav" href="query.html">Query</a></li>
+                <li><a id="browse-nav" class="nav-btn" href="browse.html">Browse</a></li>
+                <li><a id="home-nav" href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="browse-tab">
+        <h2 class="page-h">Browse Data Visualization</h2>
+
+        <h2 class="collapsible-button">Charts</h2>
+        <div id="chart-wrapper" class="collapse-content">
+            <div id="chart-selects-container">
+                <select name="chart-select" id="chart-select">
+                    <option value="">- Select a Chart -</option>
+                    <option value="country">Countries</option>
+                    <option value="measurement-type">Measurement Type</option>
+                    <option value="year-collected">Year Collected</option>
+                    <option value="species">Species Collected</option>
+                </select> <br>
+            </div> <!--chart select container-->
+    
+            <div id="chart-container">
+                    <canvas id="dataChart" width="800" height="650"></canvas>
+            </div>
+        </div> <!-- chart wrapper -->
+
+        <h2 class="collapsible-button">Projects</h2>
+        <div id="projects-wrapper" class="collapse-content">
+            <div id="proj-table-container">
+                <table id="project-table">
+                    <thead>
+                        <tr class="no-hover">
+                            <th>Project Title</th>
+                            <th>Principal Investigator</th>
+                            <th>PI Affiliation</th>
+                            <th>Number of Measurements</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div> <!--projects wrapper-->
+
+        <h2 class="collapsible-button">Summary Tables</h2>
+        <div id="tables-wrapper" class="collapse-content">
+
+            <div id="year-table-container">
+                <table id="year-table">
+                        <tr class="no-hover">
+                            <th class="ascending" onclick="sortTable('year-table', 0)">Year Collected</th>
+                            <th class="ascending" onclick="sortTable('year-table', 1)">Count</th>
+                        </tr>
+                </table>
+            </div>
+
+            <div id="species-table-container">
+                <table id="species-table">
+                        <tr class="no-hover">
+                            <th class="ascending" onclick="sortTable('species-table', 0)">Species</th>
+                            <th class="ascending" onclick="sortTable('species-table', 1)">Count</th>
+                            <th>Species</th>
+                            <th>Count</th>
+
+                        </tr>
+                </table>
+            </div>
+
+            <div id="country-table-container">
+                <table id="country-table">
+                        <tr class="no-hover">
+                            <th class="ascending" onclick="sortTable('country-table', 0)">Country</th>
+                            <th class="ascending" onclick="sortTable('country-table', 1)">Count</th>
+                        </tr>
+                </table>
+            </div>
+
+            <div id="measure-table-container">
+                <table id="measure-table">
+                        <tr class="no-hover">
+                            <th class="ascending" onclick="sortTable('measure-table', 0)">Measurement Type</th>
+                            <th class="ascending" onclick="sortTable('measure-table', 1)">Count</th>
+                        </tr>
+                </table>
+            </div>
+
+        </div> <!--tables wrapper-->
+
+        <!-- The Modal -->
+    <div id="detail-modal" class="modal">
+
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-table-container">
+
+        </div>
+        </div> <!--modal content-->
+  
+    </div> <!--modal -->
+    
+</div> <!-- browse tab-->
+
+<div id="project-detail-container" style="display: none;">
+    <div id="project-detail">
+        <h1>Hi there</h1>
+
+    </div>
+</div> <!-- project detail container -->
+
+<script>
+function sortTable(tableId, n) {
+    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+
+    table = document.getElementById(tableId);
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+
+            let cmpX=isNaN(parseInt(x.innerHTML))?x.innerHTML.toLowerCase():parseInt(x.innerHTML);
+            let cmpY=isNaN(parseInt(y.innerHTML))?y.innerHTML.toLowerCase():parseInt(y.innerHTML);
+            cmpX=(cmpX=='-')?0:cmpX;
+            cmpY=(cmpY=='-')?0:cmpY;
+
+            if (dir == "asc") {
+                if (cmpX > cmpY) {
+                    shouldSwitch= true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (cmpX < cmpY) {
+                    shouldSwitch= true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount ++;      
+        } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    }
+</script>
+
+<script type="text/javascript" src="assets/js/browse.js"></script>
+
+</body>
+
+</html>
