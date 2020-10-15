@@ -208,7 +208,6 @@ window.onload = function() {
        const res = await fetch(projBaseURL)
        const data = await res.json()
 
-
        let targetId = []
        // console.log(targetId, '<---- in the array')
 
@@ -247,7 +246,6 @@ window.onload = function() {
                    // console.log('id clicked on:', project.projectId)
                })
 
-
                tr.innerHTML = `
                <td>${title}</td>
                <td>${checkPI()}</td>
@@ -261,9 +259,8 @@ window.onload = function() {
 
     // OTHER FUNCTIONS
 
-// Accordion - Collapsible
-let coll = document.getElementsByClassName("collapsible-button");
-
+    // Accordion - Collapsible
+    let coll = document.getElementsByClassName("collapsible-button");
 
     for (let i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {

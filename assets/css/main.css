@@ -126,11 +126,15 @@ header li, header a {
     display: flex;
     flex-direction: column;
     width: 60%;
-    text-align: center;
+    text-align: left;
     position: absolute;
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
+  }
+
+  .page-h {
+      margin-bottom: 1%;
   }
 
