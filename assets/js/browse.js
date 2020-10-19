@@ -49,7 +49,7 @@ window.onload = function() {
 
    async function showSpeciesChart() {
        const data = await getSpecies()
-       makeChart('horizontalBar', data.scientificName, 'Species By Scientific Name', data.values)
+       makeChart('horizontalBar', data.scientificName, 'Samples Collected', data.values)
    }
 
    async function speciesTableData() {
@@ -87,7 +87,7 @@ window.onload = function() {
 
    async function showMeasurementTypeChart() {
        const data = await getMeasurementType()
-       makeChart('bar', data.type, 'Measurement Types', data.values)
+       makeChart('bar', data.type, 'Samples Collected', data.values)
    }
 
    async function measurementTypeTableData() {
@@ -124,7 +124,7 @@ window.onload = function() {
 
    async function showYearCollectedChart() {
        const data = await getYearCollected()
-       makeChart('line', data.yearCollected, 'Year Collected', data.values)
+       makeChart('line', data.yearCollected, 'Samples Collected', data.values)
    }
 
    async function yearCollectedTableData() {
@@ -144,7 +144,7 @@ window.onload = function() {
    }
 
    async function getCountry() {
-       const res = await fetch(`${apiBaseURL}country.json`)
+       const res = await fetch(`${apiBaseURL}country_top20.json`)
        const data = await res.json()
        let countries = []
        let values = []
@@ -177,7 +177,7 @@ window.onload = function() {
 
    async function showCountriesChart() {
        const data = await getCountry()
-       makeChart('bar', data.countries, 'Countries', data.values)
+       makeChart('bar', data.countries, 'Samples Collected', data.values)
    }
 
 
